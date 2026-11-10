@@ -276,7 +276,7 @@ addR(fB.pos.clone().addScaledVector(fB.n,220).addScaledVector(fB.t,-60));addR(fB
 const river=new THREE.CatmullRomCurve3(RP);const RVS=river.getSpacedPoints(400);
 function nearRiver(x,z){let bd=1e9;for(let i=0;i<RVS.length;i+=2){const p=RVS[i],d=(p.x-x)**2+(p.z-z)**2;if(d<bd)bd=d}return Math.sqrt(bd)}
 function hills(x,z){return 3.6*Math.sin(x*.009+1)*Math.cos(z*.007)+2.2*Math.sin(z*.013+x*.005)+1*Math.sin(x*.027-z*.019)+2}
-function ground(x,z){let h=hills(x,z);const r=nearRoad(x,z);if(r){const town=r.s.u>TOWN0-.02&&r.s.u<TOWN1+.01,core=town?30:14,fall=town?70:70;const w=1-ss(core,fall,r.d);h=h*(1-w)+(r.s.y-.04)*w}
+function ground(x,z){let h=hills(x,z);const r=nearRoad(x,z);if(r){const town=r.s.u>TOWN0-.02&&r.s.u<TOWN1+.01,core=town?30:14,fall=town?70:70;const w=1-ss(core,fall,r.d);h=h*(1-w)+(r.s.y-.04)*w;const sb=Math.abs(r.s.u-BR)*RL;if(sb<26){const k=(1-ss(22,25.5,sb))*(1-ss(5.5,9,r.d));h-=1.6*k}}
   const dr=nearRiver(x,z);if(dr<26){const w=1-ss(6,26,dr);h=h*(1-w)+(WATER-1.6)*w}return h}
 
 /* ---------- terrain, road, sidewalks ---------- */
@@ -288,7 +288,7 @@ function ribbon(u0,u1,a,b,dy,mat,vs){const seg=Math.max(8,Math.round((u1-u0)*120
   pos.push(A.x,f.pos.y+dy,A.z,B.x,f.pos.y+dy,B.z);uv.push(0,u*RL/vs,1,u*RL/vs);if(i<seg){const k=i*2;idx.push(k,k+1,k+2,k+1,k+3,k+2)}}const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));g.setIndex(idx);g.computeVertexNormals();
   const m=new THREE.Mesh(g,mat);m.material.side=THREE.DoubleSide;scene.add(m);return m}
 const dirtM=lam({map:rep(dirt,1,1)}),cobM=lam({map:rep(cobble,2,1)}),slabM=lam({map:rep(slabs,1,1)});
-ribbon(0,TOWN0+.004,-3.4,3.4,.06,dirtM,7);ribbon(TOWN0,TOWN1,-4,4,.07,cobM,4);ribbon(TOWN1-.004,1,-3.4,3.4,.06,dirtM,7);
+ribbon(0,TOWN0+.004,-3.4,3.4,.06,dirtM,7);ribbon(TOWN0,TOWN1,-4,4,.07,cobM,4);ribbon(TOWN1-.004,BR-22.5/RL,-3.4,3.4,.06,dirtM,7);ribbon(BR+22.5/RL,1,-3.4,3.4,.06,dirtM,7);ribbon(BR-28/RL,BR-23.5/RL,-4.3,4.3,.065,dirtM,7);ribbon(BR+23.5/RL,BR+28/RL,-4.3,4.3,.065,dirtM,7);
 ribbon(TOWN0,TOWN1,4,9.2,.2,slabM,4);ribbon(TOWN0,TOWN1,-9.2,-4,.2,slabM,4);
 const curbM=lam({color:0x8f8a80});ribbon(TOWN0,TOWN1,3.95,4.1,.2,curbM,4);ribbon(TOWN0,TOWN1,-4.1,-3.95,.2,curbM,4);
 // a patch of ground that follows the terrain (plaza, fields, pasture)
@@ -316,7 +316,7 @@ const archY=s=>Math.abs(s)<ARCH?WATER+.3+Math.sqrt(ARCH*ARCH-s*s)*.48:-1e9;
 function grid(rows,mat,us,vs){const n=rows.length,m=rows[0].length,pos=[],uv=[],idx=[];for(let i=0;i<n;i++)for(let j=0;j<m;j++){const p=rows[i][j];pos.push(p.x,p.y,p.z);uv.push(p.s!==undefined?p.s/us:i/(n-1)*us,p.t!==undefined?p.t/vs:j/(m-1))}
   for(let i=0;i<n-1;i++)for(let j=0;j<m-1;j++){const a=i*m+j,b=a+m;idx.push(a,b,a+1,b,b+1,a+1)}const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));g.setIndex(idx);g.computeVertexNormals();
   const me=new THREE.Mesh(g,mat);scene.add(me);return me}
-{const N=96,W=4.7,PW=.5,PH=1.0;const sm=lam({map:rep(stoneT,1,1),side:THREE.DoubleSide}),vm=lam({map:rep(voussT,1,1),side:THREE.DoubleSide}),pm=lam({map:rep(pavT,1,1)}),cap=lam({color:0x9a9284});
+{const N=96,W=4.7,PW=.5,PH=1.0;const sm=lam({map:rep(stoneT,1,1),side:THREE.DoubleSide}),vm=lam({map:rep(voussT,1,1),side:THREE.DoubleSide}),pm=lam({map:rep(pavT,1,1),side:THREE.DoubleSide}),cap=lam({color:0x9a9284,side:THREE.DoubleSide});
   const cols=[];for(let i=0;i<=N;i++){const s=-BHALF+2*BHALF*i/N,u=BR+s/RL,f=frameAt(u,1,0);const y=roadY(u)+.09;const at=o=>{const p=f.pos.clone().addScaledVector(f.n,o);return p};cols.push({s,u,f,y,at})}
   const V=(p,y,s,t)=>{const v=new THREE.Vector3(p.x,y,p.z);v.s=s;v.t=t;return v};
   // paving across the deck
@@ -331,6 +331,12 @@ function grid(rows,mat,us,vs){const n=rows.length,m=rows[0].length,pos=[],uv=[],
     grid(cols.filter(c=>Math.abs(c.s)<ARCH).map(c=>{const p=c.at(sd*(W+.06));const y=archY(c.s);return[V(p,y+.9,c.s,0),V(p,y,c.s,1)]}),vm,3,1);
     // ends of the parapets
     [0,cols.length-1].forEach(k=>{const c=cols[k];const a=c.at(sd*W),b=c.at(sd*(W-PW));grid([[V(a,c.y+PH,0,0),V(a,c.y-.4,0,1)],[V(b,c.y+PH,1,0),V(b,c.y-.4,1,1)]],sm,1,1)})});
+  // end piers: square posts that close each parapet and run into the bank
+  {const pierM=lam({map:rep(stoneT,.5,1)}),capM=lam({color:0x9a9284});[0,cols.length-1].forEach(k=>{const c=cols[k];[-1,1].forEach(sd=>{const p=c.at(sd*(W-PW/2));const bot=Math.min(ground(p.x,p.z),c.y)-1.6,top=c.y+PH+.3;
+    const m=new THREE.Mesh(new THREE.BoxGeometry(.95,top-bot,.95),pierM);m.position.set(p.x,(top+bot)/2,p.z);m.rotation.y=c.f.yaw;scene.add(m);
+    const cp=new THREE.Mesh(new THREE.BoxGeometry(1.15,.18,1.15),capM);cp.position.set(p.x,top+.09,p.z);cp.rotation.y=c.f.yaw;scene.add(cp)})})}
+  // stone sill where the deck meets the road at each end
+  [0,cols.length-1].forEach(k=>{const c=cols[k],c2=cols[k?k-1:1];grid([[V(c.at(-W+PW),c.y+.02,0,0),V(c.at(W-PW),c.y+.02,0,1)],[V(c2.at(-W+PW),c2.y+.02,1,0),V(c2.at(W-PW),c2.y+.02,1,1)]],cap,1,1)});
   // underside of the arch
   grid(cols.filter(c=>Math.abs(c.s)<ARCH).map(c=>[V(c.at(-W),archY(c.s),c.s,0),V(c.at(W),archY(c.s),c.s,9.4)]),sm,5,5);
 }
@@ -768,7 +774,7 @@ const km=$('#km'),place=$('#place'),cue=$('#cue'),arrive=$('#arrive'),start=$('#
 function frame(){const dt=Math.min(.05,clock.getDelta()),time=clock.elapsedTime;
   const target=Math.min(1,Math.max(0,scrollY/maxScroll()))*END;uCur=reduce?target:uCur+(target-uCur)*Math.min(1,dt*3);
   // walk on the sidewalk in town, the shoulder outside it, the middle of the bridge
-  const inTown=uCur>TOWN0+.004&&uCur<TOWN1-.004,onBridge=Math.abs(uCur-BR)*RL<20;const offT=onBridge?2.5:inTown?6.2:3.9;camOff+=(offT-camOff)*Math.min(1,dt*2.5);
+  const inTown=uCur>TOWN0+.004&&uCur<TOWN1-.004,onBridge=Math.abs(uCur-BR)*RL<34;const offT=onBridge?2.5:inTown?6.2:3.9;camOff+=(offT-camOff)*Math.min(1,dt*2.5);
   const cf=frameAt(uCur,1,camOff),la=frameAt(uCur+.012,1,camOff);
   if(keys['a']||keys['arrowleft']||keys['q'])yawT+=dt*1.6;if(keys['d']||keys['arrowright']||keys['e'])yawT-=dt*1.6;
   yaw+=(yawT-yaw)*Math.min(1,dt*6);pitch+=(pitchT-pitch)*Math.min(1,dt*6);
