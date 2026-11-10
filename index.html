@@ -98,6 +98,61 @@ a{color:inherit}
 .nogl .track{height:auto}.nogl #world,.nogl .route,.nogl .dash{display:none}.nogl .arrive{position:static;opacity:1;transform:none;margin:120px auto}
 @media (max-width:720px){.route{display:none}.odo b{font-size:22px}.cue{display:none}.start{bottom:max(96px,calc(env(safe-area-inset-bottom,0px) + 80px))}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* walk mode */
+.walking .route,.walking .dash,.walking .start,.walking .face,.walking .arrive{display:none!important}
+.fade{position:fixed;inset:0;z-index:60;background:var(--haze);opacity:0;pointer-events:none;transition:opacity .35s}.fade.on{opacity:1}
+.walk{position:fixed;inset:0;z-index:18;pointer-events:none}
+.walk[hidden]{display:none}
+.w-top,.w-joy,.w-jump,.w-use{pointer-events:auto}
+.w-top{position:fixed;left:max(20px,env(safe-area-inset-left,0px));top:74px;display:flex;gap:8px}
+.w-top .pill svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2}
+.w-todo{position:fixed;left:max(20px,env(safe-area-inset-left,0px));top:126px;background:rgba(251,250,247,.72);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:14px;padding:12px 14px;box-shadow:inset 0 0 0 1px rgba(13,13,12,.12);max-width:250px}
+.w-todo small{display:block;font:600 9.5px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--mute);margin-bottom:6px}
+.w-todo ul{list-style:none;margin:0;padding:0;font:500 11.5px/1.75 var(--mono)}.w-todo li::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;box-shadow:inset 0 0 0 1.2px var(--ink);margin-right:8px;vertical-align:1px}
+.w-todo li.done{color:var(--mute);text-decoration:line-through;text-decoration-thickness:1px}.w-todo li.done::before{background:var(--ink)}
+.w-keys{position:fixed;left:50%;bottom:max(22px,env(safe-area-inset-bottom,0px));transform:translateX(-50%);display:flex;gap:8px;flex-wrap:wrap;justify-content:center;width:min(760px,calc(100vw - 40px));font:600 10.5px var(--mono);letter-spacing:.06em;color:var(--ink);opacity:0;transition:opacity .6s}
+.w-keys.on{opacity:1}.w-keys span{background:rgba(251,250,247,.78);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-radius:999px;padding:6px 11px 6px 7px;box-shadow:inset 0 0 0 1px rgba(13,13,12,.12)}
+.walk kbd{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 4px;margin-right:4px;border-radius:5px;background:var(--ink);color:var(--paper);font:700 10px var(--mono)}
+.w-prompt{position:fixed;left:50%;bottom:calc(max(22px,env(safe-area-inset-bottom,0px)) + 46px);transform:translateX(-50%);display:flex;align-items:center;gap:6px;background:rgba(251,250,247,.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:999px;padding:7px 14px 7px 8px;font:700 12px var(--mono);box-shadow:0 0 0 1px rgba(13,13,12,.12),0 10px 30px rgba(0,0,0,.08)}
+.w-prompt[hidden]{display:none}
+.w-msg{position:fixed;left:50%;top:20%;transform:translate(-50%,8px);max-width:min(520px,calc(100vw - 40px));text-align:center;font:500 14px/1.5 var(--mono);color:var(--ink);background:rgba(251,250,247,.84);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:14px;padding:10px 16px;opacity:0;transition:opacity .4s,transform .4s}
+.w-msg.on{opacity:1;transform:translate(-50%,0)}
+.w-dot{position:fixed;left:50%;top:50%;width:4px;height:4px;margin:-2px;border-radius:50%;background:rgba(251,250,247,.9);box-shadow:0 0 0 1px rgba(13,13,12,.35)}
+.w-joy,.w-jump,.w-use{display:none}
+@media (pointer:coarse){.w-joy{display:block;position:fixed;left:24px;bottom:calc(max(24px,env(safe-area-inset-bottom,0px)) + 30px);width:112px;height:112px;border-radius:50%;background:rgba(251,250,247,.35);box-shadow:inset 0 0 0 1px rgba(13,13,12,.25);touch-action:none}
+ .w-joy i{position:absolute;left:34px;top:34px;width:44px;height:44px;border-radius:50%;background:rgba(251,250,247,.9);box-shadow:0 0 0 1px rgba(13,13,12,.3)}
+ .w-jump,.w-use{display:block;position:fixed;right:24px;width:64px;height:64px;border-radius:50%;border:0;background:rgba(251,250,247,.85);box-shadow:0 0 0 1px rgba(13,13,12,.25);font:700 11px var(--mono);color:var(--ink)}
+ .w-jump{bottom:calc(max(24px,env(safe-area-inset-bottom,0px)) + 30px)}.w-use{bottom:calc(max(24px,env(safe-area-inset-bottom,0px)) + 104px)}.w-keys,.w-todo{display:none}.w-prompt{bottom:calc(max(24px,env(safe-area-inset-bottom,0px)) + 160px)}}
+.w-panel{position:fixed;left:50%;bottom:max(18px,env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:30;width:min(560px,calc(100vw - 24px))}
+.w-panel[hidden]{display:none}
+.w-panel:has(.wide){width:min(760px,calc(100vw - 24px))}
+.w-card{background:#fbfaf7;color:var(--ink);border-radius:20px;padding:18px 18px 16px;box-shadow:0 0 0 1px rgba(13,13,12,.12),0 30px 80px rgba(0,0,0,.2);max-height:min(70vh,560px);overflow:auto;position:relative}
+.w-card.dark{background-color:#1d1b19;color:#ece6d8;background-image:repeating-linear-gradient(45deg,rgba(236,230,216,.05) 0 2px,transparent 2px 14px),repeating-linear-gradient(-45deg,rgba(236,230,216,.05) 0 2px,transparent 2px 14px)}
+.w-card.paper{background:#f2ece0}
+.w-who{margin:0 0 8px;font:600 9.5px var(--mono);letter-spacing:.16em;text-transform:uppercase;opacity:.6}
+.w-say{margin:0 0 14px;font:500 15px/1.55 var(--mono);min-height:2.6em;padding-right:70px}
+.w-opts{display:flex;flex-direction:column;gap:6px}
+.w-opt{text-align:left;border:0;border-radius:12px;padding:10px 12px;font:600 12.5px var(--mono);background:rgba(13,13,12,.05);color:inherit;cursor:pointer}
+.dark .w-opt{background:rgba(236,230,216,.08)}.w-opt:hover{background:rgba(13,13,12,.1)}.dark .w-opt:hover{background:rgba(236,230,216,.16)}
+.w-sins{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.w-chip{border:0;border-radius:999px;padding:7px 11px;font:600 11.5px var(--mono);background:transparent;box-shadow:inset 0 0 0 1px currentColor;color:inherit;opacity:.75;cursor:pointer;text-transform:capitalize}
+.w-sins .w-chip{text-transform:none}
+.w-chip.on{opacity:1}.dark .w-chip.on{background:#ece6d8;color:#1d1b19}.w-card:not(.dark) .w-chip.on{background:#0d0d0c;color:#fbfaf7;box-shadow:none}
+.w-in{width:100%;box-sizing:border-box;border:0;border-radius:12px;padding:10px 12px;font:500 13px var(--mono);background:rgba(13,13,12,.06);color:inherit;margin-bottom:8px;resize:vertical}.dark .w-in{background:rgba(236,230,216,.1)}
+.w-in::placeholder{color:inherit;opacity:.5}
+.w-x{position:absolute;right:12px;top:12px;height:30px;border:0;border-radius:999px;padding:0 12px;font:700 11px var(--mono);background:transparent;box-shadow:inset 0 0 0 1px currentColor;color:inherit;opacity:.7;cursor:pointer}
+.w-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:space-between}.w-row .w-x{position:static}
+.w-book p{margin:0 0 10px;font:italic 500 15px/1.45 Georgia,"Times New Roman",serif;color:#2b2722}
+.w-stops{display:flex;gap:6px}
+.w-keys2{position:relative;height:150px;display:grid;grid-template-columns:repeat(15,1fr);gap:2px;margin:12px 0;user-select:none;-webkit-user-select:none;touch-action:none}
+.wk{border:0;border-radius:0 0 6px 6px;background:#f6f2ea;box-shadow:inset 0 0 0 1px rgba(13,13,12,.25);display:flex;align-items:flex-end;justify-content:center;padding-bottom:8px;font:700 10px var(--mono);color:var(--mute);cursor:pointer}
+.bk{position:absolute;top:0;width:calc(100%/24);height:62%;border:0;border-radius:0 0 5px 5px;background:#1d1b19;display:flex;align-items:flex-end;justify-content:center;padding-bottom:6px;font:700 9px var(--mono);color:#9b958a;cursor:pointer;z-index:2}
+.wk.on{background:#d9d1c1}.bk.on{background:#5a524a}
+
+.w-open .w-todo,.w-open .w-keys,.w-open .w-prompt{display:none!important}
+
+.route{top:calc(50% + 22px)}.route button{padding:3px 0}
 </style>
 </head>
 <body>
@@ -130,6 +185,17 @@ a{color:inherit}
   <p>Effects, generators, node graphs and motion. All of it runs here, on your own machine.</p>
   <div class="acts"><a class="pill" href="app.html">Open the studio <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><button class="pill ghost" type="button" id="again">Walk it again</button></div>
 </div>
+<div class="walk" id="walk" hidden>
+  <div class="w-top"><button class="pill ghost" id="wLeave" type="button"><svg viewBox="0 0 24 24" style="transform:scaleX(-1)"><path d="M5 12h14M13 6l6 6-6 6"/></svg>Back to the road</button><button class="pill ghost" id="wMute" type="button">Voices on</button></div>
+  <div class="w-todo" id="wTodo"><small>Notre-Dame-du-Silence</small><ul></ul></div>
+  <div class="w-keys" id="wKeys"><span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>walk</span><span><kbd>&larr;</kbd><kbd>&rarr;</kbd>turn, or drag</span><span><kbd>W</kbd><kbd>W</kbd>run</span><span><kbd>Space</kbd>jump</span><span><kbd>C</kbd>crouch</span><span><kbd>E</kbd>use</span><span><kbd>X</kbd>clap</span></div>
+  <div class="w-prompt" id="wPrompt" hidden><kbd>E</kbd><span></span></div>
+  <div class="w-msg" id="wMsg" role="status"></div>
+  <i class="w-dot"></i>
+  <div class="w-joy" id="wJoy"><i></i></div><button class="w-use" id="wUse" type="button">Use</button><button class="w-jump" id="wJump" type="button">Jump</button>
+</div>
+<div class="w-panel" id="wPanel" hidden><div class="w-card"></div></div>
+<div class="fade" id="fade"></div>
 <main class="track"><section><h2>Town</h2><p>A walk through an old town. Plaid awnings, spike-type bakery signs, poster columns, a cinema marquee in cut-out letters, TVs playing motion loops, chrome murals on brutalist blocks and a reaction-diffusion banner, all made in 27244.</p></section></main>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -275,9 +341,19 @@ addR(fB.pos.clone().addScaledVector(fB.n,220).addScaledVector(fB.t,-60));addR(fB
 [.6,.66,.73,.8,.87,.94,.99].forEach((u,i)=>addR(frameAt(u,-1,34+8*Math.sin(i*1.7)).pos));{const f=frameAt(.999,-1,34);addR(f.pos.clone().addScaledVector(f.t,120))}
 const river=new THREE.CatmullRomCurve3(RP);const RVS=river.getSpacedPoints(400);
 function nearRiver(x,z){let bd=1e9;for(let i=0;i<RVS.length;i+=2){const p=RVS[i],d=(p.x-x)**2+(p.z-z)**2;if(d<bd)bd=d}return Math.sqrt(bd)}
+/* ---------- the church road: leaves the main road before town and climbs to the church ---------- */
+const CJ_U=.05,CJ=frameAt(CJ_U,-1,0),CH_Y=roadY(CJ_U)+5.2;
+const CGATE=CJ.pos.clone().addScaledVector(CJ.n,-92).addScaledVector(CJ.t,10);
+const CX=CGATE.x-31,CZ=CGATE.z; // church origin: inside face of the west wall, nave runs toward -x
+const branch=new THREE.CatmullRomCurve3([CJ.pos.clone().addScaledVector(CJ.n,-1),CJ.pos.clone().addScaledVector(CJ.n,-20).addScaledVector(CJ.t,3),CJ.pos.clone().addScaledVector(CJ.n,-52).addScaledVector(CJ.t,-7),new THREE.Vector3(CGATE.x+15,0,CGATE.z+2.5),new THREE.Vector3(CGATE.x-2,0,CGATE.z)]);
+const BRL=branch.getLength();const BR0Y=roadY(CJ_U);const BRY=s=>BR0Y+(CH_Y-BR0Y)*ss(.06,.82,s);
+const BRS=branch.getSpacedPoints(180).map((p,i)=>({x:p.x,z:p.z,y:BRY(i/180)}));
+const BRBOX={x0:Math.min(...BRS.map(p=>p.x))-30,x1:Math.max(...BRS.map(p=>p.x))+30,z0:Math.min(...BRS.map(p=>p.z))-30,z1:Math.max(...BRS.map(p=>p.z))+30};
+function churchGround(x,z,h){const dx=Math.max(CX-90-x,0,x-(CX+36)),dz=Math.max(CZ-44-z,0,z-(CZ+44)),d=Math.hypot(dx,dz);if(d<52){const w=1-ss(0,52,d);h=h*(1-w)+(CH_Y-.02)*w}
+  if(x>BRBOX.x0&&x<BRBOX.x1&&z>BRBOX.z0&&z<BRBOX.z1){let bd=1e9,by=0;for(let i=0;i<BRS.length;i++){const s=BRS[i],e=(s.x-x)**2+(s.z-z)**2;if(e<bd){bd=e;by=s.y}}bd=Math.sqrt(bd);if(bd<28){const w=1-ss(4.5,28,bd);h=h*(1-w)+(by-.04)*w}}return h}
 function hills(x,z){return 3.6*Math.sin(x*.009+1)*Math.cos(z*.007)+2.2*Math.sin(z*.013+x*.005)+1*Math.sin(x*.027-z*.019)+2}
 function ground(x,z){let h=hills(x,z);const r=nearRoad(x,z);if(r){const town=r.s.u>TOWN0-.02&&r.s.u<TOWN1+.01,core=town?30:14,fall=town?70:70;const w=1-ss(core,fall,r.d);h=h*(1-w)+(r.s.y-.04)*w;const sb=Math.abs(r.s.u-BR)*RL;if(sb<26){const k=(1-ss(22,25.5,sb))*(1-ss(5.5,9,r.d));h-=1.6*k}}
-  const dr=nearRiver(x,z);if(dr<26){const w=1-ss(6,26,dr);h=h*(1-w)+(WATER-1.6)*w}return h}
+  h=churchGround(x,z,h);const dr=nearRiver(x,z);if(dr<26){const w=1-ss(6,26,dr);h=h*(1-w)+(WATER-1.6)*w}return h}
 
 /* ---------- terrain, road, sidewalks ---------- */
 const ROADBOX=new THREE.Box3().setFromPoints(pts);const TW=1400,TD=1400,TSEG=300;
@@ -567,7 +643,7 @@ waitingSpots.forEach(([u,side,off])=>{const p=person();const f=frameAt(u,side,of
 {const p=person();const f=frameAt(FARM0+.03,1,5.6);p.position.copy(f.pos);p.position.y=ground(f.pos.x,f.pos.z);p.rotation.y=f.yaw+Math.PI*.6;Object.assign(p.userData,{idle:true,ph:1});pose(p,[-.3,.2],[-.2,-.2]);scene.add(p)}
 /* ---------- animal voices, synthesized in a chunky game style ---------- */
 let AC=null;function ac(){try{if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume()}catch(e){}return AC}
-function voice(o){const c=ac();if(!c)return;const t0=c.currentTime+(o.at||0),d=o.dur;const out=c.createGain();out.gain.value=0;out.connect(c.destination);
+function voice(o){const c=ac();if(!c)return;const t0=c.currentTime+(o.at||0),d=o.dur;const out=c.createGain();out.gain.value=0;out.connect(o.out||c.destination);
   const g=out.gain;g.setValueAtTime(0,t0);g.linearRampToValueAtTime(o.vol||.3,t0+(o.atk||.02));g.setValueAtTime(o.vol||.3,t0+d*.7);g.exponentialRampToValueAtTime(.001,t0+d);
   let src;if(o.noise){const b=c.createBuffer(1,c.sampleRate*d,c.sampleRate),a=b.getChannelData(0);for(let i=0;i<a.length;i++)a[i]=Math.random()*2-1;src=c.createBufferSource();src.buffer=b}
   else{src=c.createOscillator();src.type=o.type||'sawtooth';src.frequency.setValueAtTime(o.f[0][1],t0);o.f.slice(1).forEach(([t,f])=>src.frequency.linearRampToValueAtTime(f,t0+t*d));
@@ -667,6 +743,479 @@ const taxi=car(0xd8c58e);{const box=new THREE.Mesh(new THREE.BoxGeometry(1.3,.5,
 {const c=car(CARC[2]);c.userData={u:TOWN0+.2,sp:7.5/RL,side:1};scene.add(c);traffic.push(c)}
 for(let u=TOWN0+.02;u<TOWN1;u+=.07+rnd()*.06){if(Math.abs(u-PZ)<.03)continue;const c=car(pickOne(CARC));const f=frameAt(u,1,3.1);c.position.copy(f.pos);c.position.y+=.07;c.rotation.y=f.yaw+(rnd()<.5?0:Math.PI);scene.add(c)}
 
+/* =====================================================================
+   NOTRE-DAME-DU-SILENCE: a French gothic church up the side road.
+   Built in local space: x across, y up, z = -s where s runs from the west
+   wall (s=0) to the apse (s=64). The group turns so the facade faces the road.
+   ===================================================================== */
+const CHNAME='Notre-Dame-du-Silence';
+const thinFog=m=>{m.onBeforeCompile=s=>{s.fragmentShader=s.fragmentShader.replace('fogDensity * fogDensity * fogDepth * fogDepth','0.2 * fogDensity * fogDensity * fogDepth * fogDepth')};return m};
+const CH=new THREE.Group();CH.position.set(CX,CH_Y+.6,CZ);CH.rotation.y=Math.PI/2;scene.add(CH);
+const CHS=new THREE.Group();CH.add(CHS);
+const sceneBefore=scene.children.slice();
+const limeT=T_(512,512,(x,W,H)=>{x.fillStyle='#a9a293';x.fillRect(0,0,W,H);let y=0,row=0;while(y<H){const rh=32;let X=-(row%2)*36;while(X<W){const w=56+((Math.random()*4)|0)*10,g=192+Math.random()*24|0;x.fillStyle=`rgb(${g},${g-5},${g-15})`;x.fillRect(X+1.5,y+1.5,w-3,rh-3);X+=w}y+=rh;row++}
+  noise(x,W,H,9000,.16,'60,52,40');for(let i=0;i<30;i++){const len=60+Math.random()*260,g=x.createLinearGradient(0,0,0,len);g.addColorStop(0,'rgba(66,60,50,.2)');g.addColorStop(1,'rgba(66,60,50,0)');x.fillStyle=g;x.fillRect(Math.random()*W,Math.random()*H*.6,3+Math.random()*8,len)}stains(x,W,H,10)});
+const floorT=T_(512,512,(x,W,H)=>{for(let i=0;i<4;i++)for(let j=0;j<4;j++){const d=(i+j)%2;const g=d?150+Math.random()*12:205+Math.random()*14|0;x.fillStyle=`rgb(${g},${g-4},${g-12})`;x.fillRect(i*128,j*128,128,128);x.strokeStyle='rgba(60,54,44,.55)';x.lineWidth=2;x.strokeRect(i*128+1,j*128+1,126,126)}noise(x,W,H,12000,.14,'50,44,36');stains(x,W,H,8)});
+const roofT=T_(256,256,(x,W,H)=>{x.fillStyle='#6f747a';x.fillRect(0,0,W,H);for(let X=0;X<W;X+=32){x.fillStyle='rgba(40,44,48,.5)';x.fillRect(X,0,3,H);x.fillStyle='rgba(200,205,210,.12)';x.fillRect(X+3,0,2,H)}noise(x,W,H,5000,.2,'30,32,36');for(let i=0;i<12;i++){x.fillStyle='rgba(120,135,120,.12)';x.fillRect(Math.random()*W,Math.random()*H,20,40)}});
+const cWoodT=T_(256,256,(x,W,H)=>{x.fillStyle='#4b3b2d';x.fillRect(0,0,W,H);for(let i=0;i<70;i++){const y=Math.random()*H;x.strokeStyle=`rgba(${Math.random()<.5?'25,18,12':'110,88,64'},${.2+Math.random()*.3})`;x.lineWidth=1+Math.random()*2;x.beginPath();x.moveTo(0,y);for(let X=0;X<W;X+=16)x.lineTo(X,y+Math.sin(X*.05+i)*2);x.stroke()}});
+const parvisM=lam({map:rep(slabs,1,1)});const limeM=thinFog(lam({map:rep(limeT,1,1)})),limeD=thinFog(lam({map:rep(limeT,1,1),side:THREE.DoubleSide})),ribM=thinFog(lam({map:rep(limeT,1,1),color:0xd2cbbd})),floorM=lam({map:rep(floorT,1,1)}),cRoofM=thinFog(lam({map:rep(roofT,1,1),side:THREE.DoubleSide})),cWoodM=lam({map:rep(cWoodT,1,1)}),
+  darkM=thinFog(lam({color:0x1f1d1b})),brassM=new THREE.MeshStandardMaterial({color:0xa48d5c,roughness:.45,metalness:.7}),pipeM=new THREE.MeshStandardMaterial({color:0xb7b6b0,roughness:.35,metalness:.8}),clothM=lam({color:0xe8e3d6}),wineM=lam({color:0x5e2a2c}),waxM=lam({color:0xeee8da});
+// stained glass: leaded mosaics in muted jewel tones
+const GLASS=[['#33506e','#6b2f38','#b9944a','#4c6747','#d9cfbd'],['#2f4b5a','#7d5a7a','#c2a35e','#3c5a7a','#e2d8c4'],['#5c2b33','#31506b','#a8853f','#6d7f58','#d4c6ae'],['#3e4f73','#8a6c3e','#6e3c49','#557063','#ddd2bf']];
+function glassTex(pal,seed){return T_(256,768,(x,W,H)=>{let S=seed;const r=()=>(S=(S*16807)%2147483647)/2147483647;x.fillStyle='#141210';x.fillRect(0,0,W,H);
+  for(let y=0;y<H;y+=22)for(let X=0;X<W;X+=26){x.fillStyle=pal[(r()*3)|0];x.fillRect(X+2+r()*2,y+2,22-r()*3,18)}
+  [190,420,640].forEach((cy,k)=>{for(let rr=96;rr>8;rr-=14){x.fillStyle=pal[(k+rr/14|0)%pal.length];x.beginPath();x.arc(W/2,cy,rr,0,7);x.fill();x.strokeStyle='#141210';x.lineWidth=3;x.stroke()}for(let a=0;a<8;a++){x.strokeStyle='#141210';x.lineWidth=3;x.beginPath();x.moveTo(W/2,cy);x.lineTo(W/2+Math.cos(a*.785)*96,cy+Math.sin(a*.785)*96);x.stroke()}});
+  noise(x,W,H,4000,.25,'255,250,235');noise(x,W,H,3000,.3,'0,0,0')})}
+const gTex=GLASS.map((p,i)=>glassTex(p,101+i*37));
+const roseTex=T_(512,512,(x,W,H)=>{const c=W/2;x.fillStyle='#141210';x.fillRect(0,0,W,H);const pal=GLASS[0].concat(GLASS[1]);
+  for(let ring=5;ring>=0;ring--){const r0=ring*42+20,n=ring?12*Math.ceil(ring/2):1;for(let k=0;k<n;k++){const a0=k/n*6.283,a1=(k+1)/n*6.283;x.fillStyle=pal[(k+ring*3)%pal.length];x.beginPath();x.arc(c,c,r0+40,a0+.02,a1-.02);x.arc(c,c,r0,a1-.02,a0+.02,true);x.closePath();x.fill()}}
+  x.fillStyle=pal[2];x.beginPath();x.arc(c,c,22,0,7);x.fill();for(let k=0;k<24;k++){const a=k/24*6.283;x.strokeStyle='#141210';x.lineWidth=4;x.beginPath();x.moveTo(c,c);x.lineTo(c+Math.cos(a)*250,c+Math.sin(a)*250);x.stroke()}
+  for(let r=20;r<260;r+=42){x.lineWidth=5;x.beginPath();x.arc(c,c,r,0,7);x.stroke()}noise(x,W,H,6000,.22,'255,250,235');x.globalCompositeOperation='destination-in';x.fillStyle='#000';x.beginPath();x.arc(c,c,252,0,7);x.fill()});
+const gIn=gTex.map(t=>thinFog(new THREE.MeshBasicMaterial({map:t,color:0xcdc8bf}))),gOut=gTex.map(t=>thinFog(lam({map:t,color:0x3d4046}))),roseIn=thinFog(new THREE.MeshBasicMaterial({map:roseTex,color:0xcdc8bf,transparent:true,alphaTest:.5})),roseOut=thinFog(lam({map:roseTex,color:0x40434a,transparent:true,alphaTest:.5}));
+const stripT=(draw)=>T_(512,128,draw);
+const trifT=stripT((x,W,H)=>{x.fillStyle='#b8b1a2';x.fillRect(0,0,W,H);for(let i=0;i<8;i++){const X=i*64+10;x.fillStyle='#2a2724';x.beginPath();x.moveTo(X,H-8);x.lineTo(X,50);x.quadraticCurveTo(X+22,10,X+44,50);x.lineTo(X+44,H-8);x.fill();x.fillStyle='#cfc8b8';x.fillRect(X+19,40,6,H-48)}noise(x,W,H,2000,.2,'60,52,40')});
+const trifM=lam({map:rep(trifT,1,1)});
+const kingsT=stripT((x,W,H)=>{x.fillStyle='#b3ac9d';x.fillRect(0,0,W,H);for(let i=0;i<7;i++){const X=i*73+8;x.fillStyle='#4a4640';x.beginPath();x.moveTo(X,H-6);x.lineTo(X,40);x.quadraticCurveTo(X+28,4,X+56,40);x.lineTo(X+56,H-6);x.fill();x.fillStyle='#d6cfbf';x.beginPath();x.arc(X+28,42,9,0,7);x.fill();x.fillRect(X+18,52,20,H-60)}noise(x,W,H,2500,.2,'60,52,40')});
+const galT=stripT((x,W,H)=>{x.fillStyle='#b3ac9d';x.fillRect(0,0,W,H);for(let i=0;i<12;i++){const X=i*43+6;x.fillStyle='#24211e';x.beginPath();x.moveTo(X,H-10);x.lineTo(X,34);x.quadraticCurveTo(X+15,6,X+30,34);x.lineTo(X+30,H-10);x.fill()}noise(x,W,H,2500,.2,'60,52,40')});
+const shaftT=T_(64,256,(x,W,H)=>{const g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,'rgba(255,255,255,.9)');g.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=g;x.fillRect(0,0,W,H);const h=x.createLinearGradient(0,0,W,0);h.addColorStop(0,'rgba(0,0,0,1)');h.addColorStop(.25,'rgba(0,0,0,0)');h.addColorStop(.75,'rgba(0,0,0,0)');h.addColorStop(1,'rgba(0,0,0,1)');x.globalCompositeOperation='destination-out';x.fillStyle=h;x.fillRect(0,0,W,H)});
+const glowT=T_(128,128,(x,W,H)=>{const g=x.createRadialGradient(64,64,0,64,64,64);g.addColorStop(0,'rgba(255,236,200,1)');g.addColorStop(.3,'rgba(255,214,150,.35)');g.addColorStop(1,'rgba(255,200,130,0)');x.fillStyle=g;x.fillRect(0,0,W,H)});
+const flameT=T_(64,128,(x,W,H)=>{const g=x.createRadialGradient(32,84,2,32,74,40);g.addColorStop(0,'rgba(255,255,240,1)');g.addColorStop(.4,'rgba(255,214,140,.9)');g.addColorStop(1,'rgba(255,170,80,0)');x.fillStyle=g;x.beginPath();x.moveTo(32,6);x.quadraticCurveTo(58,80,32,122);x.quadraticCurveTo(6,80,32,6);x.fill()});
+
+/* ---- builders (local space) ---- */
+const cAdd=(geo,mat,x=0,y=0,z=0,par=CHS)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);par.add(m);return m};
+const boxS=(x0,x1,y0,y1,s0,s1,mat,par)=>cAdd(new THREE.BoxGeometry(x1-x0,y1-y0,s1-s0),mat,(x0+x1)/2,(y0+y1)/2,-(s0+s1)/2,par);
+function archPts(a,b,ys,k=.7,n=10){const w=b-a,r=Math.max(w/2,k*w),ca=(w/2-r)/r,ta=Math.acos(Math.max(-1,Math.min(1,ca))),cl=a+r,cr=b-r,P=[];
+  for(let i=0;i<=n;i++){const t=Math.PI-(Math.PI-ta)*i/n;P.push([cl+r*Math.cos(t),ys+r*Math.sin(t)])}for(let i=1;i<=n;i++){const t=(Math.PI-ta)*(1-i/n);P.push([cr+r*Math.cos(t),ys+r*Math.sin(t)])}return P}
+function archHole(a,b,y0,ys,k){const p=new THREE.Path();p.moveTo(a,y0);archPts(a,b,ys,k).forEach(([x,y])=>p.lineTo(x,y));p.lineTo(b,y0);return p}
+function shapeFrom(pts,holes=[]){const s=new THREE.Shape();s.moveTo(pts[0][0],pts[0][1]);pts.slice(1).forEach(([x,y])=>s.lineTo(x,y));holes.forEach(h=>s.holes.push(h));return s}
+const ext=(sh,d)=>new THREE.ExtrudeGeometry(sh,{depth:d,bevelEnabled:false,curveSegments:8});
+// a wall running along s: inner face at x0, thickness t toward +x
+function wallS(x0,t,pts,holes,mat=limeM){const m=cAdd(ext(shapeFrom(pts,holes),t),mat,x0,0,0);m.rotation.y=Math.PI/2;return m}
+// a wall across the nave (in x), between z0 and z0+t
+function wallX(z0,t,pts,holes,mat=limeM){return cAdd(ext(shapeFrom(pts,holes),t),mat,0,0,z0)}
+function lancetGeo(w,h,k=.75){const P=[[-w/2,0],...archPts(-w/2,w/2,h-w*.9,k,8),[w/2,0]];const g=new THREE.ShapeGeometry(shapeFrom(P));const p=g.attributes.position,uv=g.attributes.uv;let top=0;for(let i=0;i<p.count;i++)top=Math.max(top,p.getY(i));for(let i=0;i<p.count;i++)uv.setXY(i,(p.getX(i)+w/2)/w,p.getY(i)/top);return g}
+// window panes: inside glows, outside reads dark
+function pane(x,y,s,w,h,dir,inside,k=.75){const i=(Math.abs(s*7+y*3)|0)%4;const m=cAdd(lancetGeo(w,h,k),(inside?gIn:gOut)[i],x,y,-s);m.rotation.y=dir>0?Math.PI/2:-Math.PI/2;return m}
+function sweep(prof,path,mat,map){const n=prof.length,m=path.length,pos=[],idx=[];for(let j=0;j<m;j++)for(let i=0;i<n;i++){const v=map(prof[i],path[j]);pos.push(v[0],v[1],v[2])}
+  for(let j=0;j<m-1;j++)for(let i=0;i<n-1;i++){const a=j*n+i,b=a+n;idx.push(a,b,a+1,b,b+1,a+1)}const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(new Array(pos.length/3*2).fill(0),2));g.setIndex(idx);g.computeVertexNormals();return cAdd(g,mat)}
+const span=(a,b,n)=>Array.from({length:n+1},(_,i)=>a+(b-a)*i/n);
+function quad(a,b,c,d,mat){const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute([...a,...b,...c,...d],3));g.setAttribute('uv',new THREE.Float32BufferAttribute([0,0,1,0,1,1,0,1],2));g.setIndex([0,1,2,0,2,3]);g.computeVertexNormals();return cAdd(g,mat)}
+
+/* ---- colliders (world space) ---- */
+const COL=[],RINGS=[];const FY=CH_Y+.6;
+function colS(x0,x1,s0,s1,top){COL.push({x0:CX-s1,x1:CX-s0,z0:CZ-x1,z1:CZ-x0,top:FY+top})}
+function colC(x,s,r,top){COL.push({c:1,x:CX-s,z:CZ-x,r,top:FY+top})}
+
+/* ---- the interior shell ---- */
+const PIERS=[6,12,18,24,30,36];
+[1,-1].forEach(sd=>{
+  // nave arcade walls, up to the eaves
+  const ops=[[.7,5.3],[6.7,11.3],[12.7,17.3],[18.7,23.3],[24.7,29.3],[30.7,35.3],[36.7,40.8]].map(([a,b])=>archHole(a,b,0,9,.7));
+  ops.push(archHole(43.2,52.8,0,22,.62));ops.push(archHole(55.2,59.3,0,9,.7));ops.push(archHole(60.7,63.6,0,9,.7));
+  wallS(sd>0?7:-8.2,1.2,[[0,-1.2],[64,-1.2],[64,33],[0,33]],ops);
+  PIERS.concat([60]).forEach(p=>colS(sd>0?7:-8.2,sd>0?8.2:-7,p-.75,p+.75,40));colS(sd>0?7:-8.2,sd>0?8.2:-7,0,.7,40);[[40.8,43.2],[52.8,55.2],[63.6,64]].forEach(([a,b])=>colS(sd>0?7:-8.2,sd>0?8.2:-7,a,b,40));
+  // aisle walls, the transept arms, the choir aisle
+  wallS(sd>0?13:-14.2,1.2,[[0,-1.2],[41,-1.2],[41,13.8],[0,13.8]],[]);colS(sd>0?13:-14.2,sd>0?14.2:-13,0,41,40);
+  wallS(sd>0?13:-14.2,1.2,[[55,-1.2],[64,-1.2],[64,13.8],[55,13.8]],[]);colS(sd>0?13:-14.2,sd>0?14.2:-13,55,64,40);
+  const ax=[[sd*13,-1.2],[sd*23.2,-1.2],[sd*23.2,33],[sd*13,33]];wallX(-41,1.2,ax,[]);wallX(-56.2,1.2,ax,[]);colS(Math.min(sd*13,sd*23.2),Math.max(sd*13,sd*23.2),39.8,41,40);colS(Math.min(sd*13,sd*23.2),Math.max(sd*13,sd*23.2),55,56.2,40);
+  wallS(sd>0?22:-23.2,1.2,[[39.8,-1.2],[56.2,-1.2],[56.2,33],[48,46.5],[39.8,33]],[]);colS(sd>0?22:-23.2,sd>0?23.2:-22,39.8,56.2,40);
+  // windows: clerestory, aisles, transept roses
+  [3,9,15,21,27,33,38.8,57.3,62.1].forEach((s,i)=>{const w=i>=6?2.4:3;pane(sd*6.97,17,s,w,6.6,-sd,1);pane(sd*8.23,17,s,w,6.6,sd,0)});
+  [3,9,15,21,27,33,59.5].forEach(s=>{pane(sd*12.97,2.6,s,2.2,7.4,-sd,1);pane(sd*14.23,2.6,s,2.2,7.4,sd,0)});
+  [44.5,48,51.5].forEach(s=>{pane(sd*21.97,3.2,s,1.5,7.2,-sd,1);pane(sd*23.23,3.2,s,1.5,7.2,sd,0)});
+  {[sd*21.9,sd*23.3].forEach(x=>{const t=cAdd(new THREE.TorusGeometry(4.75,.26,8,44),limeM,x,19,-48);t.rotation.y=Math.PI/2});const r=new THREE.CircleGeometry(4.6,40);const a=cAdd(r,roseIn,sd*(22-.03),19,-48);a.rotation.y=-sd*Math.PI/2;const b=cAdd(r,roseOut,sd*23.23,19,-48);b.rotation.y=sd*Math.PI/2}
+  // triforium band
+  PIERS.concat([0]).forEach(p=>{const a=p===0?.7:p+.7,b=p===36?40.8:p+5.3;const g=new THREE.PlaneGeometry(b-a,2,1,1);const uv=g.attributes.uv;for(let i=0;i<uv.count;i++)uv.setX(i,uv.getX(i)*(b-a)/4.4);const pl=cAdd(g,trifM,sd*(7-.02),15.5,-(a+b)/2);pl.rotation.y=-sd*Math.PI/2});
+  // piers: columns, shafts, capitals
+  PIERS.concat([60]).forEach(p=>{const cx=sd*7.6;[sd*7,sd*8.2].forEach(x=>cAdd(new THREE.CylinderGeometry(.32,.34,9,12),limeM,x,4.5,-p));cAdd(new THREE.CylinderGeometry(.15,.15,15,8),limeM,sd*6.95,16.5,-p);
+    cAdd(new THREE.BoxGeometry(1.9,.5,1.8),limeM,cx,9.1,-p);cAdd(new THREE.BoxGeometry(1.9,.35,1.8),limeM,cx,.17,-p)});
+  [42,54].forEach(p=>{[[6.9,-.9],[6.9,.9],[8.3,-.9],[8.3,.9]].forEach(([x,dz])=>cAdd(new THREE.CylinderGeometry(.36,.38,22,12),limeM,sd*x,11,-(p+dz)));cAdd(new THREE.BoxGeometry(2.4,.6,3),limeM,sd*7.6,22.2,-p)});
+  // buttresses and flying buttresses
+  PIERS.concat([60]).forEach(p=>{boxS(sd>0?14.2:-17.2,sd>0?17.2:-14.2,-1.2,20.5,p-.8,p+.8,limeM);boxS(sd>0?14.2:-16.2,sd>0?16.2:-14.2,20.5,23,p-.7,p+.7,limeM);cAdd(new THREE.ConeGeometry(.75,4.6,4),limeM,sd*15.7,25.3,-p);
+    const P=[[15.2,19.2]];for(let i=1;i<=10;i++){const a=i/10*Math.PI/2;P.push([8.2+7*Math.cos(a),19.2+4.2*Math.sin(a)])}P.push([8.2,26],[15.2,21.8]);cAdd(ext(shapeFrom(P.map(([x,y])=>[sd*x,y])),.8),limeM,0,0,-p-.4);
+    colS(sd>0?14.2:-17.2,sd>0?17.2:-14.2,p-.8,p+.8,40)});
+  // aisle roofs
+  [[0,41],[55,64]].forEach(([a,b])=>quad([sd*14.6,13.8,-a],[sd*14.6,13.8,-b],[sd*8.2,17.2,-b],[sd*8.2,17.2,-a],cRoofM));
+  // towers over the first bays
+  const tx0=sd>0?7.2:-17,tx1=sd>0?17:-7.2,tc=sd*12.1,inner=sd>0?tx0:tx1;
+  boxS(tx0,tx1,14,56,-3,8,limeM);boxS(tx0,tx1,-1.2,14,-3,-2,limeM);boxS(sd>0?14.2:-17,sd>0?17:-14.2,-1.2,14,-2,8,limeM);colS(tx0,tx1,-3,-2,40);colS(sd>0?14.2:-17,sd>0?17:-14.2,-2,8,40);
+  [[tx0,-3],[tx1,-3],[tx0,8],[tx1,8]].forEach(([x,s])=>{boxS(x-.75,x+.75,x===inner&&s===8?33:-1.2,34,s-.75,s+.75,limeM);boxS(x-.6,x+.6,34,50,s-.6,s+.6,limeM);cAdd(new THREE.ConeGeometry(.85,7,4),limeM,x,60.6,-s)});
+  boxS(tx0-.2,tx1+.2,56,57.6,-3.2,8.2,limeM);cAdd(new THREE.ConeGeometry(4.9,30,8),cRoofM,tc,72.6,-2.5);
+  [[tc-2.4,-3.03,0],[tc+2.4,-3.03,0]].forEach(([x,s])=>{const g=lancetGeo(1.9,12,.8);cAdd(g,darkM,x,38,-s+.01).rotation.y=0});
+  [[tc-2.4,8.03],[tc+2.4,8.03]].forEach(([x,s])=>{const m=cAdd(lancetGeo(1.9,12,.8),darkM,x,38,-s);m.rotation.y=Math.PI});
+  [.2,4.8].forEach(s=>{const m=cAdd(lancetGeo(1.9,12,.8),darkM,sd*(sd>0?17.03:17.03),38,-s);m.rotation.y=sd*Math.PI/2;const m2=cAdd(lancetGeo(1.9,12,.8),darkM,sd*7.17,38,-s);m2.rotation.y=-sd*Math.PI/2});
+  // side portals on the tower fronts
+  {const d=cAdd(lancetGeo(2.6,6.4,.75),lam({map:rep(cWoodT,1,1)}),tc,0,3.04);[1,2,3].forEach(i=>{const P=archPts(-1.3-i*.42,1.3+i*.42,4.6,.75,10).map(([x,y])=>[x+tc,y]);const Q=archPts(-1.3-(i-1)*.42,1.3+(i-1)*.42,4.6,.75,10).map(([x,y])=>[x+tc,y]).reverse();const sh=shapeFrom([[tc-1.3-i*.42,0],...P,[tc+1.3+i*.42,0],[tc+1.3+(i-1)*.42,0],...Q,[tc-1.3-(i-1)*.42,0]]);cAdd(ext(sh,.35*i),limeM,0,0,3)})}
+  // the kings and the upper gallery on the tower fronts
+  {const k=cAdd(new THREE.PlaneGeometry(10.2,2.4),lam({map:rep(kingsT,1.4,1)}),tc,12.6,3.02)}
+});
+// west wall with the main door, its rose and gable
+wallX(0,2,[[-17,-1.2],[17,-1.2],[17,14],[6.8,14],[6.8,33],[0,45],[-6.8,33],[-6.8,14],[-17,14]],[archHole(-2.2,2.2,0,6.5,.72)]);
+colS(-17,-2.2,-2,0,40);colS(2.2,17,-2,0,40);
+{[[2.08,0],[-.1,0]].forEach(([z])=>cAdd(new THREE.TorusGeometry(5.15,.28,8,48),limeM,0,21,z));const r=new THREE.CircleGeometry(5,48);const a=cAdd(r,roseIn,0,21,-.03);a.rotation.y=Math.PI;cAdd(r,roseOut,0,21,2.03);
+  for(let i=1;i<=4;i++){const P=archPts(-2.2-i*.45,2.2+i*.45,6.5,.72,12),Q=archPts(-2.2-(i-1)*.45,2.2+(i-1)*.45,6.5,.72,12).reverse();cAdd(ext(shapeFrom([[-2.2-i*.45,0],...P,[2.2+i*.45,0],[2.2+(i-1)*.45,0],...Q,[-2.2-(i-1)*.45,0]]),.32*i),limeM,0,0,2)}
+  colS(-4.2,-2.2,-3.4,-2,9);colS(2.2,4.2,-3.4,-2,9);
+  cAdd(new THREE.PlaneGeometry(13.4,2.4),lam({map:rep(kingsT,1.8,1)}),0,12.6,2.02);cAdd(new THREE.PlaneGeometry(13.4,2.6),lam({map:rep(galT,1.6,1)}),0,29,2.02);
+  // the tympanum over the door
+  const T=archPts(-2.2,2.2,6.5,.72,12);cAdd(new THREE.ShapeGeometry(shapeFrom([[-2.2,6.5],...T,[2.2,6.5]])),limeD,0,0,1.2);
+  // door leaves, swung open
+  [-1,1].forEach(sd=>{const g=new THREE.Group();g.position.set(sd*2.2,0,-.05);g.rotation.y=sd*-1.25;const lf=new THREE.Mesh(new THREE.BoxGeometry(2.2,6.4,.14),lam({map:rep(cWoodT,1,2)}));lf.position.set(-sd*1.1,3.2,0);g.add(lf);CH.add(g);colS(sd>0?1.5:-2.3,sd>0?2.3:-1.5,0,2.2,6)});
+  // steps up to the door
+  [[-2.6,.45-.6],[-3.2,.3-.6],[-3.8,.15-.6]].forEach(([s,top],i)=>boxS(-5.2,5.2,-1.2,top,s,-2+(i?0:0),limeM));
+}
+// apse and ambulatory
+{const half=(r0,r1,h,y)=>cAdd(new THREE.CylinderGeometry(r0,r1,h,28,1,true,Math.PI/2,Math.PI),limeD,0,y,-64);
+  half(13,13,15,6.3);half(14.2,14.2,15,6.3);half(7.6,7.6,20.4,22.8);RINGS.push({cs:64,r0:12.7,r1:14.6});
+  for(let k=0;k<=5;k++){const a=Math.PI/2+k*Math.PI/5,x=7.6*Math.sin(a),z=-64+7.6*Math.cos(a);cAdd(new THREE.CylinderGeometry(.55,.6,12.6,12),limeM,x,6.3,z);colC(x,-z,.65,40)}
+  for(let k=0;k<5;k++){const a=Math.PI/2+(k+.5)*Math.PI/5;[[7.55,15.6,1.5,6,gIn],[7.67,15.6,1.5,6,gOut]].forEach(([r,y,w,h,ms],q)=>{const m=cAdd(lancetGeo(w,h),ms[k%4],r*Math.sin(a),y,-64+r*Math.cos(a));m.rotation.y=a+(q?0:Math.PI)})}
+  for(let k=0;k<4;k++){const a=Math.PI/2+(k+.5)*Math.PI/4;[[12.95,gIn,Math.PI],[14.25,gOut,0]].forEach(([r,ms,o])=>{const m=cAdd(lancetGeo(2,6.4),ms[(k+1)%4],r*Math.sin(a),3,-64+r*Math.cos(a));m.rotation.y=a+o});
+    if(k<3){const a2=Math.PI/2+(k+1)*Math.PI/4,bx=15.7*Math.sin(a2),bz=-64+15.7*Math.cos(a2);const b=cAdd(new THREE.BoxGeometry(1.6,14,3),limeM,bx,5.8,bz);b.rotation.y=a2;cAdd(new THREE.ConeGeometry(.7,4,4),limeM,bx,14.8,bz);colC(bx,-bz,1.6,40)}}
+  const dome=cAdd(new THREE.SphereGeometry(7.6,24,10,Math.PI,Math.PI,0,Math.PI/2),limeD,0,24,-64);dome.scale.y=1.12;
+  const ring=cAdd(new THREE.RingGeometry(7.6,13,24,1,0,Math.PI),limeD,0,12.6,-64);ring.rotation.x=-Math.PI/2;
+  cAdd(new THREE.ConeGeometry(8.9,13.5,20,1,true,Math.PI/2,Math.PI),cRoofM,0,39.75,-64);cAdd(new THREE.CylinderGeometry(8.2,14.6,3.4,24,1,true,Math.PI/2,Math.PI),cRoofM,0,15.5,-64)}
+// vaults and ribs
+{const nave=archPts(-7,7,24,.62,12);sweep(nave,span(0,64,32),limeD,([x,y],s)=>[x,y,-s]);
+  const tr=archPts(41,55,24,.62,12);[1,-1].forEach(sd=>sweep(tr,span(7,22,10),limeD,([s,y],x)=>[sd*x,y,-s]));
+  [1,-1].forEach(sd=>{const ai=archPts(8.2,13,9.4,.62,8);[[0,41],[55,64]].forEach(([a,b])=>sweep(ai,span(a,b,10),limeD,([x,y],s)=>[sd*x,y,-s]))});
+  const yAt=x=>{let best=nave[0];for(const p of nave)if(Math.abs(p[0]-x)<Math.abs(best[0]-x))best=p;return best[1]};
+  const tube=pts=>cAdd(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts.map(p=>new THREE.Vector3(...p))),28,.2,5),ribM);
+  const bays=[0,6,12,18,24,30,36,42,54,60,64];
+  bays.forEach(s=>tube(nave.map(([x,y])=>[x,y-.1,-s])));
+  for(let i=0;i<bays.length-1;i++){const a=bays[i],b=bays[i+1];[[-7,7],[7,-7]].forEach(([x0,x1])=>tube(span(0,1,12).map(t=>{const x=x0+(x1-x0)*t;return[x,yAt(x)-.12,-(a+(b-a)*t)]})))}
+  tube(span(0,64,16).map(s=>[0,yAt(0)-.1,-s]))}
+// roofs
+{const tri=[[-8.9,33],[8.9,33],[0,46.5]];cAdd(ext(shapeFrom(tri),64),cRoofM,0,0,-64);
+  [1,-1].forEach(sd=>{const m=cAdd(ext(shapeFrom([[-55.4,33],[-40.6,33],[-48,46.5]]),14.7),cRoofM,sd>0?23.6:-8.9,0,0);m.rotation.y=-Math.PI/2});
+  cAdd(new THREE.CylinderGeometry(1.7,1.7,7,8),cRoofM,0,48,-48);cAdd(new THREE.ConeGeometry(1.7,22,8),cRoofM,0,62.5,-48)}
+// floors and the raised choir
+boxS(-14.2,14.2,-.3,0,-2,64,floorM);boxS(-23.2,23.2,-.3,0,39.8,56.2,floorM);cAdd(new THREE.CylinderGeometry(14.2,14.2,.3,28,1,false,Math.PI/2,Math.PI),floorM,0,-.15,-64);
+boxS(-7,7,0,.6,54.6,64,floorM);cAdd(new THREE.CylinderGeometry(7.6,7.6,.6,24,1,false,Math.PI/2,Math.PI),floorM,0,.3,-64);
+[[53.1,.15],[53.6,.3],[54.1,.45]].forEach(([s,h])=>boxS(-7,7,0,h,s,54.6,floorM));
+cAdd(new THREE.PlaneGeometry(2.2,53),wineM,0,.012,-27).rotation.x=-Math.PI/2;
+// labyrinth on the crossing floor
+const labT=T_(512,512,(x,W,H)=>{x.clearRect(0,0,W,H);const c=W/2;x.strokeStyle='rgba(40,36,30,.75)';x.lineWidth=7;for(let r=24;r<250;r+=19){const gap=(r/19|0)%2?.25:-.35;x.beginPath();x.arc(c,c,r,gap+.12,gap+6.15);x.stroke()}for(let k=0;k<4;k++){x.save();x.translate(c,c);x.rotate(k*1.5708+.2);x.beginPath();x.moveTo(30,0);x.lineTo(240,0);x.stroke();x.restore()}x.fillStyle='rgba(40,36,30,.5)';x.beginPath();x.arc(c,c,18,0,7);x.fill()});
+{const l=cAdd(new THREE.CircleGeometry(5.6,48),new THREE.MeshLambertMaterial({map:labT,transparent:true,depthWrite:false}),0,.015,-48,CH);l.rotation.x=-Math.PI/2}
+
+/* ---- furniture ---- */
+// pews
+for(let s=8;s<=37;s+=1.3)[[-6.4,-1.2],[1.2,6.4]].forEach(([a,b])=>{boxS(a,b,.42,.5,s-.22,s+.22,cWoodM);boxS(a,b,.5,1.02,s-.3,s-.22,cWoodM);[a,b].forEach(x=>boxS(x-.04,x+.04,0,1.05,s-.32,s+.25,cWoodM));colS(a,b,s-.22,s+.22,.5);colS(a,b,s-.3,s-.22,1.02)});
+// altar, cross, candles, rail
+boxS(-1.6,1.6,.6,1.65,61.4,62.6,limeM);boxS(-1.7,1.7,1.65,1.7,61.3,62.7,clothM);colS(-1.7,1.7,61.3,62.7,1.7);
+boxS(-.04,.04,1.7,3.1,62.3,62.4,brassM);boxS(-.4,.4,2.6,2.68,62.3,62.4,brassM);
+boxS(-6,-.9,.6,1.25,54.8,55,cWoodM);boxS(.9,6,.6,1.25,54.8,55,cWoodM);colS(-6,-.9,54.8,55,1.25);colS(.9,6,54.8,55,1.25);
+// pulpit
+cAdd(new THREE.CylinderGeometry(.25,.4,2.4,8),cWoodM,6.2,1.2,-37.6);cAdd(new THREE.CylinderGeometry(.95,.8,1.25,8),cWoodM,6.2,3,-37.6);cAdd(new THREE.CylinderGeometry(1.25,1.25,.18,8),cWoodM,6.2,6.4,-37.6);colC(6.2,37.6,1,4);
+// confessionals in the north aisle
+[[17.6,1],[27.6,0]].forEach(([s0,on])=>{boxS(-13,-11.8,0,2.8,s0+1.2,s0+2.6,cWoodM);boxS(-13,-11.6,2.8,3.3,s0,s0+3.8,cWoodM);[s0,s0+3.8].forEach(s=>boxS(-13,-11.7,0,2.8,s-.06,s+.06,cWoodM));
+  [s0+.6,s0+3.2].forEach(s=>{const c=cAdd(new THREE.PlaneGeometry(1.1,2.2),wineM,-11.75,1.3,-s);c.rotation.y=Math.PI/2});colS(-13,-11.7,s0,s0+3.8,3.3);
+  if(on){const lamp=cAdd(new THREE.SphereGeometry(.08,10,8),new THREE.MeshBasicMaterial({color:0xe9c27a}),-11.6,3.45,-(s0+1.9),CH)}});
+// votive rack, statue chapel, kneeler, book
+boxS(10.3,12.6,0,.9,13.2,15.8,cWoodM);boxS(10.6,12.6,.9,1.15,13.2,15.8,cWoodM);boxS(11,12.6,1.15,1.4,13.2,15.8,cWoodM);colS(10.3,12.6,13.2,15.8,1.4);
+boxS(11.8,13,0,1.3,32.3,33.7,limeM);colS(11.8,13,32.3,33.7,1.3);
+{const st=new THREE.Group();const stoneP=lam({color:0xd8d2c5});const robe=new THREE.Mesh(new THREE.CylinderGeometry(.22,.48,1.6,16),stoneP);robe.position.y=.8;st.add(robe);const hd=new THREE.Mesh(new THREE.SphereGeometry(.2,20,14),stoneP);hd.position.y=1.82;st.add(hd);
+  const veil=new THREE.Mesh(new THREE.SphereGeometry(.24,20,14,0,6.283,0,1.9),stoneP);veil.position.y=1.85;st.add(veil);[-1,1].forEach(k=>{const h=new THREE.Mesh(new THREE.SphereGeometry(.06,10,8),stoneP);h.position.set(k*.07,1.25,.24);st.add(h)});
+  const halo=new THREE.Mesh(new THREE.TorusGeometry(.34,.022,8,40),brassM);halo.position.set(0,1.9,-.18);st.add(halo);st.position.set(12.4,1.3,-33);st.rotation.y=-Math.PI/2;CH.add(st)}
+boxS(10.2,10.7,0,.22,32.4,33.6,cWoodM);boxS(10.75,10.9,.22,1.05,32.4,33.6,cWoodM);colS(10.2,10.9,32.4,33.6,.5);
+boxS(10.1,10.6,0,1.1,29.7,30.3,cWoodM);{const b=cAdd(new THREE.BoxGeometry(.5,.04,.7),clothM,10.35,1.16,-30,CH);b.rotation.z=.25}colS(10.1,10.6,29.7,30.3,1.2);
+// holy water, poor box, bell rope, font
+[-3.2,3.2].forEach(x=>{cAdd(new THREE.CylinderGeometry(.12,.18,.9,10),limeM,x,.45,-1.1);cAdd(new THREE.SphereGeometry(.32,16,8,0,6.283,Math.PI/2,Math.PI/2),limeM,x,1.05,-1.1);const w=cAdd(new THREE.CircleGeometry(.27,20),new THREE.MeshBasicMaterial({color:0x8d969a}),x,1.0,-1.1,CH);w.rotation.x=-Math.PI/2;colC(x,1.1,.35,1.05)});
+boxS(3.3,3.4,0,.9,3,3.1,cWoodM);boxS(3.1,3.6,.9,1.3,2.8,3.3,cWoodM);colS(3.1,3.6,2.8,3.3,1.3);
+cAdd(new THREE.CylinderGeometry(.6,.7,.9,8),limeM,-10.5,.45,-7);cAdd(new THREE.CylinderGeometry(.75,.6,.35,8),limeM,-10.5,1.05,-7);colC(-10.5,7,.8,1.2);
+const rope=new THREE.Group();rope.position.set(-10.5,0,-1.6);CH.add(rope);{const r=new THREE.Mesh(new THREE.CylinderGeometry(.025,.025,10.6,6),lam({color:0x8e7f63}));r.position.y=6.9;rope.add(r);const sally=new THREE.Mesh(new THREE.CylinderGeometry(.055,.055,.6,8),lam({color:0x7a3b34}));sally.position.y=1.9;rope.add(sally)}
+// hymn board on a pier
+{const hb=T_(256,384,(x,W,H)=>{x.fillStyle='#2b2520';x.fillRect(0,0,W,H);x.fillStyle='#ece6d8';x.font='700 70px "Red Hat Mono", monospace';x.textAlign='center';['100','23','412'].forEach((n,i)=>x.fillText(n,W/2,100+i*112))});const m=cAdd(new THREE.PlaneGeometry(.7,1.05),new THREE.MeshLambertMaterial({map:hb}),6.68,3.2,-30,CH);m.rotation.y=-Math.PI/2}
+// organ in the north transept
+boxS(-22,-19.6,0,3.6,43,53,cWoodM);colS(-22,-19.6,43,53,3.6);
+{const P=[];for(let i=0;i<29;i++){const s=43.4+i*.33,h=3+Math.abs(Math.sin(i*.42))*5.5+(i%7===3?2:0);P.push(cAdd(new THREE.CylinderGeometry(.13,.13,h,10),pipeM,-21.4,3.6+h/2,-s))}}
+boxS(-19.5,-18.6,0,1.05,46.9,49.1,cWoodM);boxS(-19.6,-19.1,1.05,1.7,46.9,49.1,cWoodM);colS(-19.6,-18.6,46.9,49.1,1.2);boxS(-18.2,-17.8,0,.5,47.4,48.6,cWoodM);
+
+/* ---- the churchyard ---- */
+const YD={x0:-34,x1:34,s0:-30,s1:82};
+{const wh=1.1,yt=-.6;const seg=(x0,x1,s0,s1)=>{boxS(x0,x1,yt-.6,yt+wh,s0,s1,limeM);colS(x0,x1,s0,s1,yt+2.2)};
+  seg(YD.x0,YD.x0+.5,YD.s0,YD.s1);seg(YD.x1-.5,YD.x1,YD.s0,YD.s1);seg(YD.x0,YD.x1,YD.s1-.5,YD.s1);seg(YD.x0,-3,YD.s0,YD.s0+.5);seg(3,YD.x1,YD.s0,YD.s0+.5);
+  [-3.4,3.4].forEach(x=>{boxS(x-.45,x+.45,-1.2,2,YD.s0-.2,YD.s0+.7,limeM);cAdd(new THREE.ConeGeometry(.5,.8,4),limeM,x,2.4,-(YD.s0+.25))});
+  boxS(-22,22,-.62,-.58,YD.s0+.5,-3.8,parvisM)}
+// graves on the north side, a few with something to say
+const EPI=['Lorem Ipsum. It said nothing, beautifully.','Final_v3_FINAL. Rest now.','Here lies a drop shadow. Too soft for this world.','Untitled-1. Never saved, always loved.','The Placeholder. Held the space until someone came.','A Gradient. Faded gently, as it lived.','Marguerite Doucet, 1871 to 1950. She kept bees.','Auguste Ferrand, mason. He carved the small dog on the north tower.','A Lens Flare. Gone in a burst.','Jeanne and Paul. Together, finally on time.'];
+const graveM=thinFog(lam({color:0xb3ad9f}));let ei=0;
+for(let r=0;r<4;r++)for(let k=0;k<7;k++){const s=8+k*7.5+(r%2)*2,x=-19-r*3.2;SEED=r*31+k*7;const kind=rnd();const g=new THREE.Group();g.position.set(x,-.6,-s);g.rotation.set(0,Math.PI/2+(rnd()-.5)*.12,(rnd()-.5)*.08);
+  if(kind<.5){const h=.9+rnd()*.5;const b=new THREE.Mesh(new THREE.BoxGeometry(.75,h,.16),graveM);b.position.y=h/2;g.add(b);const t=new THREE.Mesh(new THREE.CylinderGeometry(.375,.375,.16,16,1,false,0,Math.PI),graveM);t.rotation.set(Math.PI/2,0,Math.PI/2);t.position.y=h;g.add(t)}
+  else if(kind<.82){const v=new THREE.Mesh(new THREE.BoxGeometry(.14,1.4,.14),graveM);v.position.y=.7;g.add(v);const hb=new THREE.Mesh(new THREE.BoxGeometry(.7,.14,.14),graveM);hb.position.y=1.05;g.add(hb)}
+  else{const o=new THREE.Mesh(new THREE.ConeGeometry(.28,1.8,4),graveM);o.position.y=.9;g.add(o)}
+  CH.add(g);colC(x,s,.45,-.6+1.6);if((r*7+k)%3===0&&ei<EPI.length){const txt=EPI[ei++];g.children.forEach(m=>hot(m,{act:'grave',k:'Headstone',n:'Read it',txt}))}}
+const CHUT=v=>{const w=CH.localToWorld(v.clone());return w};
+
+/* ---- light: glowing glass, shafts, candles, dust ---- */
+const shaftM=new THREE.MeshBasicMaterial({map:shaftT,color:0xffe7c2,transparent:true,opacity:.11,blending:THREE.AdditiveBlending,depthWrite:false,side:THREE.DoubleSide});
+[3,9,15,21,27,33].forEach(s=>{const m=quad([7,23.5,-(s-1.4)],[7,23.5,-(s+1.4)],[-4,0,-(s+3.6)],[-4,0,-(s+.8)],shaftM);CH.add(m)});
+const flameM=new THREE.SpriteMaterial({map:flameT,color:0xffe3b8,blending:THREE.AdditiveBlending,depthWrite:false,transparent:true}),glowM=new THREE.SpriteMaterial({map:glowT,color:0xffd9a6,blending:THREE.AdditiveBlending,depthWrite:false,transparent:true,opacity:.5});
+const flames=[];function flame(x,y,z,big){const f=new THREE.Sprite(flameM);f.position.set(x,y,z);f.scale.set(big?.07:.05,big?.14:.1,1);CH.add(f);const g=new THREE.Sprite(glowM);g.position.set(x,y,z);g.scale.setScalar(big?.9:.45);CH.add(g);const o={f,g,ph:Math.random()*9};flames.push(o);return o}
+[-1.2,-.7,.7,1.2].forEach(x=>{boxS(x-.03,x+.03,1.7,2.2,62.1,62.2,brassM);boxS(x-.035,x+.035,2.2,2.45,62.1,62.2,waxM);flame(x,2.53,-62.15,1)});
+const votives=[];{const cupM=lam({color:0x7c4038});for(let t=0;t<3;t++)for(let i=0;i<12;i++){const s=13.4+i*.2,x=10.5+t*.4,y=[.9,1.15,1.4][t];cAdd(new THREE.CylinderGeometry(.055,.05,.09,10),cupM,x,y+.045,-s);const f=flame(x,y+.13,-s);votives.push(f)}}
+let candles=0;try{candles=+localStorage.getItem('nd-candles')||0}catch(e){}
+votives.forEach((v,i)=>{const on=i<(7+candles)%37;v.f.visible=v.g.visible=on;v.on=on});
+const dust=new THREE.Points(new THREE.BufferGeometry().setAttribute('position',new THREE.Float32BufferAttribute(Array.from({length:1800},(_,i)=>i%3===0?(Math.random()-.5)*13:i%3===1?Math.random()*22:-(Math.random()*52)),3)),new THREE.PointsMaterial({color:0xfff2d8,size:.05,transparent:true,opacity:.55,depthWrite:false}));CH.add(dust);
+
+/* ---- merge the stone into a handful of draw calls ---- */
+function triUV(g,sc){const p=g.attributes.position,n=g.attributes.normal,uv=g.attributes.uv;for(let i=0;i<p.count;i++){const ax=Math.abs(n.getX(i)),ay=Math.abs(n.getY(i)),az=Math.abs(n.getZ(i));let u,v;if(ay>=ax&&ay>=az){u=p.getX(i);v=p.getZ(i)}else if(ax>=az){u=p.getZ(i);v=p.getY(i)}else{u=p.getX(i);v=p.getY(i)}uv.setXY(i,u*sc,v*sc)}uv.needsUpdate=true}
+[[trifM,0],[parvisM,.22],[limeM,.2],[limeD,.2],[ribM,.2],[floorM,.25],[cRoofM,.35],[cWoodM,.5],[darkM,0],[brassM,0],[pipeM,0],[clothM,0],[wineM,0],[waxM,0],[graveM,0]].forEach(([m,sc])=>{const r=mergeInto(CHS,m);if(r&&sc)triUV(r.geometry,sc)});
+gIn.concat(gOut,[roseIn,roseOut]).forEach(m=>mergeInto(CHS,m));
+// clear anything the town scattered over the churchyard
+{const x0=CX-YD.s1-8,x1=CX-YD.s0+8,z0=CZ-YD.x1-8,z1=CZ-YD.x0+8;sceneBefore.forEach(o=>{if(o===CH||o.isLight||o.isCamera)return;const p=o.position;if(p.x>x0&&p.x<x1&&p.z>z0&&p.z<z1&&!(p.x===0&&p.z===0))scene.remove(o)});
+  const rooted=o=>{while(o.parent)o=o.parent;return o===scene};[pick,peopleMeshes,animalMeshes].forEach(a=>{for(let i=a.length-1;i>=0;i--)if(!rooted(a[i]))a.splice(i,1)})}
+// nothing grows on the church road
+{const near=(x,z)=>BRS.some(b=>(b.x-x)**2+(b.z-z)**2<64);sceneBefore.forEach(o=>{if(o===CH||o.isLight||o.isCamera)return;const q=o.position;if(!(q.x===0&&q.z===0)&&near(q.x,q.z))scene.remove(o)})}
+// cypresses along the churchyard wall, an oak by the gate
+for(let s=-24;s<80;s+=9){[YD.x0-2.5,YD.x1+2.5].forEach(x=>{const w=toWorld(x,s);plantTree('poplar',w.x,w.z,1.05)})}
+function toWorld(x,s){return{x:CX-s,z:CZ-x}}
+{const w=toWorld(9,-36);plantTree('oak',w.x,w.z,1.1)}
+
+/* ---- the branch road and the signpost at the junction ---- */
+function ribbonC(curve,yf,t0,t1,a,b,dy,mat,vs){const seg=Math.round((t1-t0)*BRL/1.2),pos=[],uv=[],idx=[];for(let i=0;i<=seg;i++){const t=t0+(t1-t0)*i/seg,p=curve.getPointAt(t),tg=curve.getTangentAt(t),n=new THREE.Vector3(-tg.z,0,tg.x).normalize();const y=yf(t)+dy;
+  pos.push(p.x+n.x*a,y,p.z+n.z*a,p.x+n.x*b,y,p.z+n.z*b);uv.push(0,t*BRL/vs,1,t*BRL/vs);if(i<seg){const k=i*2;idx.push(k,k+1,k+2,k+1,k+3,k+2)}}const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));g.setIndex(idx);g.computeVertexNormals();const m=new THREE.Mesh(g,mat);scene.add(m);return m}
+ribbonC(branch,BRY,.02,1,-2.6,2.6,.045,lam({map:rep(dirt,1,1),side:THREE.DoubleSide}),6);
+function fingerTex(txt,sub,left){return T_(1024,160,(x,W,H)=>{x.clearRect(0,0,W,H);x.save();if(left){x.translate(W,0);x.scale(-1,1)}x.fillStyle='#e6dfcf';x.beginPath();x.moveTo(8,14);x.lineTo(W-90,14);x.lineTo(W-8,H/2);x.lineTo(W-90,H-14);x.lineTo(8,H-14);x.closePath();x.fill();x.strokeStyle='#22201c';x.lineWidth=6;x.stroke();x.restore();
+  x.fillStyle='#1d1b18';x.font='800 56px Archivo, "Arial Narrow", sans-serif';x.textAlign=left?'right':'left';x.textBaseline='middle';x.fillText(txt,left?W-40:40,H/2-6);if(sub){x.font='600 26px "Red Hat Mono", monospace';x.textAlign=left?'left':'right';x.fillText(sub,left?120:W-120,H/2+2)}noise(x,W,H,2500,.12,'40,30,20')})}
+{const post=new THREE.Group();const f=frameAt(CJ_U-.006,-1,6.2);post.position.set(f.pos.x,ground(f.pos.x,f.pos.z),f.pos.z);scene.add(post);
+  const pole=new THREE.Mesh(new THREE.CylinderGeometry(.07,.08,3.6,8),BLACK);pole.position.y=1.8;post.add(pole);const cap=new THREE.Mesh(new THREE.SphereGeometry(.11,10,8),BLACK);cap.position.y=3.65;post.add(cap);
+  const arm=(txt,sub,dir,y,info)=>{const g=new THREE.Group();g.position.y=y;g.rotation.y=Math.atan2(-dir.z,dir.x);const fr=new THREE.Mesh(new THREE.PlaneGeometry(2.4,.38),new THREE.MeshBasicMaterial({map:fingerTex(txt,sub,false),transparent:true,alphaTest:.5,color:0xeeeeee}));fr.position.set(1.25,0,.012);g.add(fr);
+    const bk=new THREE.Mesh(new THREE.PlaneGeometry(2.4,.38),new THREE.MeshBasicMaterial({map:fingerTex(txt,sub,true),transparent:true,alphaTest:.5,color:0xeeeeee}));bk.position.set(1.25,0,-.012);bk.rotation.y=Math.PI;g.add(bk);post.add(g);hot(fr,info);hot(bk,info)};
+  const toCh=branch.getPointAt(.12).sub(post.position);toCh.y=0;toCh.normalize();
+  arm(CHNAME,'0.1 km',toCh,3.05,{go:'church',k:'Signpost',n:CHNAME});
+  arm('Borgo','0.3 km',CJ.t.clone(),2.6,{to:TOWN0-.02,k:'Signpost',n:'Borgo, the town'});
+  arm('La Ferme','2.4 km',CJ.t.clone(),2.2,{to:FARM0+.01,k:'Signpost',n:'The farm'});
+  stopAt(CJ_U,'Church road')}
+// a plaque at the gate
+{const t=paintedSign(CHNAME,'800 64px Archivo, sans-serif','#d9d2c2','#1d1b18','XIIIe SIÈCLE · ENTREZ');const m=cAdd(new THREE.PlaneGeometry(2.2,.55),new THREE.MeshBasicMaterial({map:t,color:0xe6e6e6}),4.6,1.2,-(YD.s0-.26),CH);m.rotation.y=0}
+
+/* ---- people of the parish ---- */
+const PRIEST=(()=>{const p=person();const cas=new THREE.Mesh(new THREE.CylinderGeometry(.24,.44,1.3,16),lam({color:0x1d1c1b}));cas.position.y=.66;p.userData.body.add(cas);const st=new THREE.Mesh(new THREE.BoxGeometry(.1,.9,.04),clothM);[-.08,.08].forEach(x=>{const s=st.clone();s.position.set(x,1.02,.18);p.userData.body.add(s)});
+  CH.updateMatrixWorld(true);p.userData.who='Père Anselme';p.position.copy(CH.localToWorld(new THREE.Vector3(6.2,2.5,-37.6)));p.rotation.y=Math.PI/2-.3;Object.assign(p.userData,{custom:true,lines:['Welcome. Sit anywhere. The pews forgive everyone.','I preach at the hour, or whenever someone sits down.']});scene.add(p);return p})();
+function parishioner(x,s,o){const p=person();const w=toWorld(x,s);p.position.set(w.x,(o.y??FY)+(o.dy||0),w.z);p.rotation.y=(o.ry??0)+Math.PI/2;Object.assign(p.userData,{idle:true,ph:Math.random()*6,lines:o.lines,who:o.who||'Parishioner'});
+  if(o.sit){p.userData.limbs.ll.rotation.x=p.userData.limbs.rl.rotation.x=-1.45;p.userData.body.position.y=-.38;Object.assign(p.userData,{idle:false,custom:true,seated:true,pose:[[-.5,.1],[-.5,-.1]]});pose(p,[-.5,.1],[-.5,-.1])}
+  if(o.kneel){p.userData.limbs.ll.rotation.x=p.userData.limbs.rl.rotation.x=.2;p.userData.body.position.y=-.5;Object.assign(p.userData,{idle:false,custom:true,seated:true,pose:[[-1.3,.35],[-1.3,-.35]]});pose(p,[-1.3,.35],[-1.3,-.35])}
+  if(o.veil){const v=new THREE.Mesh(new THREE.SphereGeometry(.33,20,14,0,6.283,0,1.7),lam({color:0x2d2b2a}));v.position.y=1.66;p.userData.body.add(v);const c=new THREE.Mesh(new THREE.CylinderGeometry(.2,.4,1.2,14),lam({color:0x34322f}));c.position.y=.62;p.userData.body.add(c)}
+  scene.add(p);return p}
+parishioner(-3.6,12.2,{sit:1,ry:Math.PI,lines:['Shh. Father is about to begin.','The violet on the floor at four o\'clock is the best thing in this town.','I come for the quiet. The sermon is a bonus.']});
+parishioner(3.2,18.7,{sit:1,ry:Math.PI,lines:['My grandmother lit a candle here every Tuesday. I kept the Tuesday.','They say a mason hid a small dog on the north tower. I have looked. It is there.']});
+parishioner(-2.6,24.1,{kneel:1,ry:Math.PI,lines:['(She is praying. You leave her be.)']});
+parishioner(9.4,15.2,{veil:1,who:'Sœur Odile',ry:Math.PI/2,lines:['Every candle here is somebody\'s somebody.','The top row burns longest. Nobody knows why.','If you light one, you do not have to say why.','Sister Agnès says the stone remembers every hymn. I believe her.']});
+const SWEEP=parishioner(-4,5,{ry:0,who:'The sacristan',lines:['Mind the third step. It has been loose since 1911.','I sweep the same floor every morning. It is never the same floor.','Clap once. Count to four. That is how long this room keeps a secret.','The bell rope is by the door. Pull gently. She is old.']});
+{const br=new THREE.Mesh(new THREE.CylinderGeometry(.02,.02,1.4,6),lam({color:0x7a6a52}));br.position.set(0,-.55,.1);br.rotation.x=.5;SWEEP.userData.limbs.ra.add(br);SWEEP.userData.custom=true}
+parishioner(-6,-14,{y:CH_Y,ry:2.2,lines:['Did you climb the hill or take the road? Same thing, really.','They have been restoring the west rose since 1974.']});
+parishioner(-4.8,-15.4,{y:CH_Y,ry:-.6,lines:['The bell rings at noon. Unless the ringer is at lunch.','Go in. It is warmer than it looks.']});
+parishioner(17,-10,{y:CH_Y,sit:1,dy:.1,ry:Math.PI,lines:['I read here because the church makes a good wall to lean on.','The graves on the north side have the best epitaphs. Go and look.']});
+{const w=toWorld(17,-10);const b=new THREE.Mesh(new THREE.BoxGeometry(2,.12,.5),cWoodM);b.position.set(w.x,CH_Y+.48,w.z);b.rotation.y=Math.PI/2;scene.add(b);colC(17,-10,1,-.05)}
+// the church cat
+const CHCAT=new THREE.Group();{const fur=lam({color:0x8b857b});const b=new THREE.Mesh(new THREE.SphereGeometry(.2,16,12),fur);b.scale.set(1.5,.75,1);CHCAT.add(b);const h=new THREE.Mesh(new THREE.SphereGeometry(.1,14,10),fur);h.position.set(.24,.06,.06);CHCAT.add(h);[-.04,.05].forEach(z=>{const e=new THREE.Mesh(new THREE.ConeGeometry(.035,.07,4),fur);e.position.set(.26,.15,.06+z);CHCAT.add(e)});const t=new THREE.Mesh(new THREE.TorusGeometry(.17,.03,6,16,3.4),fur);t.rotation.x=Math.PI/2;t.position.set(-.08,-.08,0);CHCAT.add(t);
+  const w=toWorld(5.2,14.4);CHCAT.position.set(w.x,FY+.6,w.z);CHCAT.rotation.y=.6;scene.add(CHCAT);CHCAT.traverse(o=>{if(o.isMesh)hot(o,{act:'cat',k:'The church cat',n:'Pet her'})})}
+
+/* ---- interactions: where you can do things ---- */
+const SPOTS=[];function spot(act,label,x,s,y,r=2.4){const w=toWorld(x,s);SPOTS.push({act,label,x:w.x,z:w.z,y:FY+y,r})}
+spot('candle','Light a candle',10.2,14.5,1.2);spot('confess','Go to confession',-11.2,18.2,1.2);spot('occupied','Confession',-11.2,28.2,1.2);spot('pray','Kneel and pray',10,33,1);spot('book','Read the book of intentions',9.8,30,1.2,1.8);
+spot('bell','Pull the bell rope',-10.5,1.6,1.5,1.8);spot('font','Bless yourself',-3.2,1.1,1.1,1.6);spot('font','Bless yourself',3.2,1.1,1.1,1.6);spot('coin','Drop a coin in the box',3.35,3.05,1.2,1.6);
+spot('organ','Play the organ',-18,48,1.2,2.2);spot('hymn','Read the hymn board',6.2,30,3,3);
+for(let s=8;s<=36.2;s+=2.6)[[-1.6,'sit'],[1.6,'sit']].forEach(([x,a])=>spot(a,'Sit and listen',x,s,.8,1.1));
+// hover targets for the same things
+const actMesh=(geo,x,y,s,info,par=CH)=>{const m=new THREE.Mesh(geo,new THREE.MeshBasicMaterial({visible:false}));m.position.set(x,y,-s);par.add(m);hot(m,info);return m};
+actMesh(new THREE.BoxGeometry(2.4,1.6,2.8),11.4,.9,14.5,{act:'candle',k:'Votive candles',n:'Light a candle'});
+actMesh(new THREE.BoxGeometry(1.5,3,3.9),-12.3,1.5,19.5,{act:'confess',k:'Confessional',n:'Go to confession'});actMesh(new THREE.BoxGeometry(1.5,3,3.9),-12.3,1.5,29.5,{act:'occupied',k:'Confessional',n:'Someone is inside'});
+actMesh(new THREE.BoxGeometry(1.2,2.4,1.4),11.2,1.2,33,{act:'pray',k:'Our Lady of the Haze',n:'Kneel and pray'});actMesh(new THREE.BoxGeometry(.6,1.3,.7),10.35,.7,30,{act:'book',k:'Book of intentions',n:'Read it'});
+actMesh(new THREE.BoxGeometry(.5,2.4,.5),-10.5,1.4,1.6,{act:'bell',k:'Bell rope',n:'Pull it'});[-3.2,3.2].forEach(x=>actMesh(new THREE.BoxGeometry(.8,1.2,.8),x,.7,1.1,{act:'font',k:'Holy water',n:'Bless yourself'}));
+actMesh(new THREE.BoxGeometry(.7,1.4,.7),3.35,.7,3.05,{act:'coin',k:'Pour les pauvres',n:'Drop a coin'});actMesh(new THREE.BoxGeometry(3,4,10),-20.5,3,48,{act:'organ',k:'The organ',n:'Play it'});
+actMesh(new THREE.BoxGeometry(.3,1.2,.9),6.6,3.2,30,{act:'hymn',k:'Hymn board',n:'Hymn 100'});
+PRIEST.userData.onClick=()=>CHURCH.sermon();
+
+/* ---- sound in stone ---- */
+let REV=null;function rev(){const c=ac();if(!c)return null;if(REV)return REV;const len=c.sampleRate*4|0,ir=c.createBuffer(2,len,c.sampleRate);for(let ch=0;ch<2;ch++){const d=ir.getChannelData(ch);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,2.8)}
+  const conv=c.createConvolver();conv.buffer=ir;const inp=c.createGain(),wet=c.createGain(),dry=c.createGain();wet.gain.value=.75;dry.gain.value=.55;inp.connect(conv);conv.connect(wet);wet.connect(c.destination);inp.connect(dry);dry.connect(c.destination);REV=inp;return REV}
+const roomOut=()=>WALK.inside?rev():null;
+function bell(f=98,vol=.32){const c=ac();if(!c)return;const dst=rev()||c.destination,t0=c.currentTime;[[.5,.5,8],[1,.6,6],[1.19,.35,4.5],[1.5,.3,3.8],[2,.32,3.2],[2.5,.18,2.4],[3,.15,2],[4.2,.08,1.3]].forEach(([r,a,d])=>{const o=c.createOscillator(),g=c.createGain();o.frequency.value=f*r*(1+(Math.random()-.5)*.004);g.gain.setValueAtTime(0,t0);g.gain.linearRampToValueAtTime(a*vol,t0+.008);g.gain.exponentialRampToValueAtTime(.0001,t0+d);o.connect(g);g.connect(dst);o.start(t0);o.stop(t0+d+.1)})}
+const FX={step(){voice({dur:.07,noise:1,bp:[260,.9,'lowpass'],vol:.07,atk:.004,out:roomOut()})},clap(){voice({dur:.05,noise:1,bp:[1400,.8],vol:.5,atk:.002,out:rev()})},land(){voice({dur:.12,noise:1,bp:[180,.8,'lowpass'],vol:.14,atk:.004,out:roomOut()})},
+  match(){voice({dur:.14,noise:1,bp:[3200,1.2],vol:.2,atk:.003,out:rev()});voice({at:.1,dur:.6,noise:1,bp:[600,.7,'lowpass'],vol:.06,atk:.1,out:rev()})},
+  coin(){[[0,2400],[.09,3100],[.2,2650]].forEach(([at,f])=>voice({at,dur:.35,f:[[0,f],[1,f*.99]],type:'sine',vol:.12,atk:.002,out:rev()}));voice({at:.42,dur:.2,noise:1,bp:[900,1],vol:.05,out:rev()})},
+  drip(){[0,.35].forEach(at=>voice({at,dur:.16,f:[[0,900],[1,1600]],type:'sine',vol:.09,atk:.004,out:rev()}))},
+  purr(){voice({dur:2.6,noise:1,bp:[140,.7,'lowpass'],trem:[24,.85],vol:.35,atk:.3})},chord(notes,dur=3,vol=.06){notes.forEach(m=>voice({dur,f:[[0,440*Math.pow(2,(m-69)/12)]],type:'triangle',vol,atk:.6,out:rev()}))}};
+
+/* ---- voices ---- */
+const SPEAK={ok:'speechSynthesis' in window,v:null,mute:false};
+function pickVoice(){try{const vs=speechSynthesis.getVoices();return vs.find(v=>/en-GB/i.test(v.lang)&&/daniel|arthur|george|male/i.test(v.name))||vs.find(v=>/en-GB/i.test(v.lang))||vs.find(v=>/^en/i.test(v.lang))||null}catch(e){return null}}
+function speak(text,o={},onend){let done=false;const fin=()=>{if(done)return;done=true;onend&&onend()};if(!SPEAK.ok||SPEAK.mute){setTimeout(fin,Math.max(2400,text.length*62));return}
+  try{const u=new SpeechSynthesisUtterance(text);const v=SPEAK.v||(SPEAK.v=pickVoice());if(v)u.voice=v;u.pitch=o.pitch??.7;u.rate=o.rate??.86;u.volume=o.vol??.9;u.onend=fin;u.onerror=fin;speechSynthesis.speak(u);setTimeout(fin,text.length*110+5000)}catch(e){setTimeout(fin,2400)}}
+const hushVoice=()=>{try{SPEAK.ok&&speechSynthesis.cancel()}catch(e){}};
+function sayAs(p,text,secs=99){if(talker&&talker!==p)hush();talker=p;talkEnd=clock.elapsedTime+secs;p.userData.talking=true;bubble.querySelector('p').textContent=text;bubble.querySelector('small').textContent=p.userData.who||'';bubble.hidden=false;bubble.classList.remove('pop');void bubble.offsetWidth;bubble.classList.add('pop')}
+
+/* ---- the words ---- */
+const SERMONS=[
+ ['Friends. Sit, if you can find a pew that does not creak.','Today, the blank page.','We fear it. We fill it too quickly, with the first thing, so we do not have to look at it.','But the blank page is not empty. It is patient.','In the beginning there was a canvas without form. That was not a problem. That was the brief.','This week, sit with it a little longer. Then make one mark you mean.','Go in peace. And save often.'],
+ ['There was once a designer who made eleven versions.','The client chose the second one.','And the designer wept. But the nine that came after were not wasted. They were how the second one became clear.','Nothing you make is wasted. Not even the one named final, final, final two.','Keep your old files. Keep your old selves. They walked you here.','Amen.'],
+ ['Look at the stone around you. Grey. Every grey a little different.','Seven hundred years of rain made these colors. No one chose them. They were allowed.','We are always reaching for the loudest color. More. Brighter.','But the window only glows because the wall is quiet.','Let some of your work be wall, so that a little of it can be window.','Peace be with you.'],
+ ['The masons who carved the top of the north tower knew no one would ever see it.','They carved it anyway. Leaves, faces, a small dog. Up there, in the wind.','Some things are made to be seen. Some things are made to be made.','Make something this week that you will not show anyone.','Hide a small dog in it.','Amen.'],
+ ['Patience is the space between two letters.','Too little and they crowd each other. Too much and they forget they are a word.','So it is with people.','Leave room for the ones beside you, but not so much that they feel alone.','Go now. The bell will tell you when.']];
+const SINS=[['shadow','I put a drop shadow on everything.','Shadows belong to evening. For your penance, make one thing this week in full daylight.'],
+ ['stretch','I stretched a logo to make it fit.','Every letter has the shape it was born with. Hold shift next time, my child.'],
+ ['bigger','I asked someone to make the logo bigger.','Then you know how it feels to be heard and not listened to. Apologise to one designer, in your heart.'],
+ ['kern','I kerned by eye at two in the morning.','The eye at two in the morning belongs to no one. Sleep. Look again at noon.'],
+ ['palette','I took someone else\'s palette.','Every palette was borrowed from a sunset. Credit the sunset, and the person.'],
+ ['ninety','I abandoned a project at ninety percent.','Finish one small thing this week. Small counts. Small is most of it.'],
+ ['lorem','I shipped lorem ipsum.','It happens to the best of us. Read every word aloud before it leaves your hands.'],
+ ['envy','I envied someone else\'s work.','Tell them you admire it. Envy cannot survive being said kindly out loud.'],
+ ['message','I left a friend\'s message unanswered.','Answer it today, even if it is one word.'],
+ ['compare','I compared myself to strangers online.','You saw their window. You did not see their wall. Close the app for an evening.'],
+ ['unkind','I was unkind to myself.','That is the one I hear most. Be as patient with yourself as you would be with anyone else in this room.'],
+ ['deadline','I lied about a deadline.','Tell the truth about the next one. Add a day. You will need it.']];
+const OPEN=[['week','It has been a week.','A week. Then we will be brief.'],['long','It has been a long time.','Welcome back. The door was never locked.'],['first','This is my first.','Then you are very welcome. There is no wrong way to begin.'],['unsure','I am not sure I am doing this right.','No one is. Just say what is on your mind.']];
+const INTENTIONS=['For my mother\'s knees, so she can garden again.','That the printer works on Tuesday.','For Lou, who started over at forty.','Thank you for the rain on the fourteenth. The tomatoes needed it.','For everyone who is tired and keeps going anyway.','Help me finish what I started. A student.','For our dog Biscuit. Fifteen years. Good boy.','Let the interview go well. Or let me be fine if it does not.','Grazie per oggi.','For the man at the bus stop who always says good morning.','I am not religious, but this room is very calm. Thank you.','Pour ma sœur.','May the bread rise.','For the courage to call my father.','For whoever reads this next. I hope today is gentle.','For the night shift.','That my brother comes home for Christmas.','For the ones who make things nobody sees.'];
+const OUR_FATHER=['Our Father, who art in heaven,','hallowed be thy name;','thy kingdom come; thy will be done','on earth as it is in heaven.','Give us this day our daily bread;','and forgive us our trespasses','as we forgive those who trespass against us;','and lead us not into temptation,','but deliver us from evil.','Amen.'];
+const HAIL_MARY=['Hail Mary, full of grace,','the Lord is with thee.','Blessed art thou among women,','and blessed is the fruit of thy womb, Jesus.','Holy Mary, Mother of God,','pray for us sinners,','now and at the hour of our death.','Amen.'];
+const TODO=[['candle','Light a candle'],['confess','Go to confession'],['pray','Kneel and pray'],['sermon','Hear a sermon'],['bell','Ring the bell'],['organ','Play the organ'],['book','Read the book of intentions'],['labyrinth','Walk the labyrinth to its center'],['font','Bless yourself at the door'],['cat','Find the church cat']];
+
+/* ---- organ ---- */
+const ORG={on:{},stop:'principal'};
+function orgOn(m){const c=ac();if(!c||ORG.on[m])return;const f=440*Math.pow(2,(m-69)/12),dst=rev()||c.destination,g=c.createGain(),t=c.currentTime;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.1,t+.07);g.connect(dst);
+  const parts={flute:[[1,1,'sine'],[2,.28,'sine']],principal:[[1,.75,'triangle'],[2,.42,'sine'],[4,.18,'sine']],reed:[[1,.55,'sawtooth'],[2,.15,'sine']],full:[[.5,.4,'triangle'],[1,.6,'triangle'],[2,.42,'sine'],[3,.16,'sine'],[4,.22,'sine'],[1,.2,'sawtooth']]}[ORG.stop];
+  const oscs=parts.map(([r,a,ty])=>{const o=c.createOscillator();o.type=ty;o.frequency.value=f*r;o.detune.value=(Math.random()-.5)*6;const og=c.createGain();og.gain.value=a;o.connect(og);if(ty==='sawtooth'){const lp=c.createBiquadFilter();lp.type='lowpass';lp.frequency.value=Math.min(8000,f*5);og.connect(lp);lp.connect(g)}else og.connect(g);o.start();return o});ORG.on[m]={g,oscs}}
+function orgOff(m){const n=ORG.on[m];if(!n)return;const c=ac(),t=c.currentTime;n.g.gain.cancelScheduledValues(t);n.g.gain.setValueAtTime(n.g.gain.value,t);n.g.gain.linearRampToValueAtTime(0,t+.4);n.oscs.forEach(o=>o.stop(t+.45));delete ORG.on[m]}
+const GMAJ=[7,9,11,0,2,4,6];const dia=(m,k)=>{let x=m;for(let i=0;i<k;i++){x--;while(!GMAJ.includes(((x%12)+12)%12))x--}return x};
+const OLD100=[[67,2],[67,1],[66,1],[64,1],[62,1],[67,1],[69,1],[71,2],[71,2],[71,1],[71,1],[69,1],[67,1],[72,1],[71,1],[69,2],[67,2],[69,1],[71,1],[69,1],[67,1],[64,1],[66,1],[67,2],[74,2],[71,1],[67,1],[69,1],[72,1],[71,1],[69,1],[67,3]];
+let hymnT=[];function playHymn(){stopHymn();let t=0;const beat=.62;OLD100.forEach(([m,d])=>{const ch=[m,dia(m,2),dia(m,4),dia(m,4)-12];hymnT.push(setTimeout(()=>{ch.forEach(orgOn);ORGUI.light(m,1)},t*1000));hymnT.push(setTimeout(()=>{ch.forEach(orgOff);ORGUI.light(m,0)},(t+d*beat-.05)*1000));t+=d*beat});hymnT.push(setTimeout(()=>CHURCH.done('organ'),t*1000))}
+function stopHymn(){hymnT.forEach(clearTimeout);hymnT=[];Object.keys(ORG.on).forEach(k=>orgOff(+k))}
+const ORGUI={light(){}};
+
+/* ---- walk mode ---- */
+const fadeEl=$('#fade'),walkEl=$('#walk'),wPrompt=$('#wPrompt'),wMsg=$('#wMsg'),wPanel=$('#wPanel'),wCard=wPanel.querySelector('.w-card');
+const hemi=scene.children.find(o=>o.isHemisphereLight),fogBase=scene.fog.color.clone(),fogIn=new THREE.Color('#57524b');
+const WALK={mode:null,pos:new THREE.Vector3(),vy:0,h:0,p:0,ground:true,run:false,lastW:0,inside:false,inK:0,state:'walk',bob:0,stepD:0,joy:{x:0,y:0},ride:null,saved:0,place:CHNAME,crouch:false,
+  look(dx,dy){if(this.mode==='ride'){this.ride.lh+=dx*.0042;this.ride.lp=Math.max(-.6,Math.min(.6,this.ride.lp+dy*.003));return}this.h+=dx*.0042;this.p=Math.max(-1.2,Math.min(1.25,this.p+dy*.003))}};
+function insideLocal(x,s){return(s>=0&&s<=64&&Math.abs(x)<=13)||(s>=41&&s<=55&&Math.abs(x)<=22)||(s>64&&Math.hypot(x,s-64)<=13)}
+function floorW(x,z){const s=CX-x,lx=CZ-z;if(insideLocal(lx,s)||(s>=-2&&s<0&&Math.abs(lx)<2.3)){let y=0;if(Math.abs(lx)<7&&s>=53.1)y=s<53.6?.15:s<54.1?.3:s<54.6?.45:.6;if(s>64&&Math.hypot(lx,s-64)<7.6)y=.6;return FY+y}
+  if(s>=-3.8&&s<-2&&Math.abs(lx)<5.2)return FY+(s>=-2.6?-.15:s>=-3.2?-.3:-.45);if(s>YD.s0&&s<YD.s1&&lx>YD.x0&&lx<YD.x1)return CH_Y;return ground(x,z)}
+const PR=.33;
+function hitCol(x,z,feet){for(const c of COL){if(feet>=c.top-.45)continue;if(c.c){if((x-c.x)**2+(z-c.z)**2<(c.r+PR)**2)return true}else{const cx=Math.max(c.x0,Math.min(x,c.x1)),cz=Math.max(c.z0,Math.min(z,c.z1));if((x-cx)**2+(z-cz)**2<PR*PR)return true}}
+  const s=CX-x,lx=CZ-z;for(const r of RINGS){if(s>r.cs-.2){const d=Math.hypot(lx,s-r.cs);if(d>r.r0-PR&&d<r.r1+PR&&feet<FY+30)return true}}if(floorW(x,z)>feet+.46)return true;return false}
+function supportAt(x,z,feet){let y=floorW(x,z);for(const c of COL){if(feet<c.top-.46)continue;if(c.c?(x-c.x)**2+(z-c.z)**2<c.r*c.r:(x>c.x0&&x<c.x1&&z>c.z0&&z<c.z1))y=Math.max(y,c.top)}return y}
+function msg(t,ms=3200){wMsg.textContent=t;wMsg.classList.add('on');clearTimeout(msg.t);msg.t=setTimeout(()=>wMsg.classList.remove('on'),ms)}
+const fade=(on)=>new Promise(r=>{fadeEl.classList.toggle('on',on);setTimeout(r,on?380:20)});
+let DONE={};try{DONE=JSON.parse(localStorage.getItem('nd-done')||'{}')}catch(e){}
+function renderTodo(){const ul=$('#wTodo ul');ul.innerHTML='';TODO.forEach(([k,t])=>{const li=document.createElement('li');li.textContent=t;if(DONE[k])li.className='done';ul.appendChild(li)})}
+
+const CHURCH={
+  done(k){if(DONE[k])return;DONE[k]=1;try{localStorage.setItem('nd-done',JSON.stringify(DONE))}catch(e){}renderTodo();const n=Object.keys(DONE).length;if(n===TODO.length)setTimeout(()=>msg('You have done everything here. The bell rings for you.',5000),1200),setTimeout(()=>bell(98,.4),1500)},
+  async go(){if(WALK.mode)return;ac();WALK.saved=scrollY;hush();await fade(true);document.documentElement.style.overflow='hidden';document.body.classList.add('walking');walkEl.hidden=false;renderTodo();
+    WALK.mode='ride';WALK.ride={t:0,lh:0,lp:0};tag.classList.remove('on');await fade(false)},
+  enter(at,h){WALK.mode='walk';WALK.state='walk';WALK.pos.copy(at);WALK.vy=0;WALK.h=h;WALK.p=0;$('#wKeys').classList.add('on');clearTimeout(this._k);this._k=setTimeout(()=>$('#wKeys').classList.remove('on'),9000)},
+  async leave(){if(!WALK.mode)return;this.stopAll();await fade(true);WALK.mode=null;walkEl.hidden=true;wPanel.hidden=true;document.body.classList.remove('walking');document.documentElement.style.overflow='';scrollTo(0,WALK.saved);yawT=yaw=0;pitchT=pitch=0;
+    hemi.intensity=.72;sunL.intensity=.42;scene.fog.color.copy(fogBase);scene.background=fogBase;await fade(false)},
+  stopAll(){hushVoice();stopHymn();if(this.serm)this.serm.stop=1;this.serm=null;closePanel();hush();WALK.state='walk'},
+  sermon(fromPew){if(this.serm&&!this.serm.stop){if(!fromPew)msg('Father is already preaching. Find a pew.');return}const S=SERMONS[(this.si=(this.si??Math.floor(Math.random()*SERMONS.length))+1)%SERMONS.length];const st={i:0,stop:0};this.serm=st;
+    const next=()=>{if(st.stop)return;if(st.i>=S.length){hush();this.serm=null;this.done('sermon');setTimeout(()=>bell(98,.28),600);msg('The sermon is over. The bell rings once.');return}const line=S[st.i++];PRIEST.userData.preach=clock.elapsedTime;sayAs(PRIEST,line,60);speak(line,{pitch:.68,rate:.84},()=>setTimeout(next,700))};
+    FX.chord([55,62,67,71],4,.035);setTimeout(next,1400)},
+  use(act,info){if(!WALK.mode||WALK.mode==='ride')return;const f=this['a_'+act];if(f)f.call(this,info)},
+  a_candle(){const v=votives.find(x=>!x.on);FX.match();candles++;try{localStorage.setItem('nd-candles',candles)}catch(e){}if(v){v.on=1;v.f.visible=v.g.visible=true;v.lit=clock.elapsedTime}else{votives.forEach((x,i)=>{if(i%5===0){x.on=0;x.f.visible=x.g.visible=false}})}
+    const lit=votives.filter(x=>x.on).length;msg(lit+' candles are burning. One of them is yours.');this.done('candle')},
+  a_font(){FX.drip();WALK.nod=clock.elapsedTime;msg('Cold water. In the name of the Father, and of the Son, and of the Holy Spirit.');this.done('font')},
+  a_coin(){FX.coin();let n=0;try{n=(+localStorage.getItem('nd-coins')||0)+1;localStorage.setItem('nd-coins',n)}catch(e){}msg(n>1?'Merci. That is '+n+' coins from you.':'Merci.')},
+  a_bell(){rope.userData.pull=clock.elapsedTime;WALK.dip=clock.elapsedTime;setTimeout(()=>bell(98,.4),650);setTimeout(()=>bell(98,.22),3600);msg('Somewhere above you, she answers.');this.done('bell')},
+  a_cat(){FX.purr();CHCAT.userData.pet=clock.elapsedTime;msg(['She purrs. She does not move.','She opens one eye. Closes it again.','She allows it.'][Math.random()*3|0]);this.done('cat')},
+  a_grave(info){msg(info.txt,5200)},
+  a_hymn(){msg('Hymn 100, Old Hundredth. Someone could play it on the organ.')},
+  a_occupied(){msg(['Someone is in there. Wait your turn.','A whisper behind the curtain. You step back.','Occupied. The little lamp is on.'][Math.random()*3|0])},
+  a_sit(){const sp=nearestSpot('sit');if(!sp)return;const s0=CX-sp.x,row=8+Math.round((s0-8)/1.3)*1.3,w=toWorld(CZ-sp.z,row+.04);WALK.state='sit';WALK.seat={x:w.x,z:w.z};WALK.h=Math.PI/2;WALK.p=.05;msg('You sit. W or E to stand.');if(!this.serm)this.sermon(true)},
+  a_book(){openBook()},a_confess(){openConfession()},a_pray(){openPrayer()},a_organ(){openOrgan()}};
+function nearestSpot(act){let best=null,bd=9;SPOTS.forEach(s=>{if(act&&s.act!==act)return;const d=Math.hypot(s.x-WALK.pos.x,s.z-WALK.pos.z);if(d<bd&&d<s.r){bd=d;best=s}});return best}
+function frontSpot(){const fx=-Math.sin(WALK.h),fz=-Math.cos(WALK.h);let best=null,bs=-1;SPOTS.forEach(s=>{const dx=s.x-WALK.pos.x,dz=s.z-WALK.pos.z,d=Math.hypot(dx,dz);if(d>s.r||Math.abs(s.y-WALK.pos.y)>3.5)return;const dot=(dx*fx+dz*fz)/Math.max(.01,d);const sc=dot*1.5-d/s.r;if((dot>.2||d<.9)&&sc>bs){bs=sc;best=s}});return best}
+
+/* ---- panels: confession, prayer, the book, the organ ---- */
+function panel(cls,html){document.body.classList.add('w-open');wCard.className='w-card '+(cls||'');wCard.innerHTML=html;wPanel.hidden=false;return wCard}
+function closePanel(){document.body.classList.remove('w-open');if(wPanel.hidden)return;wPanel.hidden=true;wCard.innerHTML='';stopHymn();if(['confess','kneel','organ'].includes(WALK.state)){WALK.state='walk';if(WALK.back)WALK.pos.copy(WALK.back)}WALK.back=null}
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function seatAt(state,x,s,y,h,p){WALK.back=WALK.pos.clone();const w=toWorld(x,s);WALK.state=state;WALK.seat={x:w.x,z:w.z,y:FY+y};WALK.h=h;WALK.p=p}
+function openConfession(){seatAt('confess',-12.3,18.3,.7,Math.PI/2,0);const c=panel('dark',`<p class="w-who">Behind the grille</p><p class="w-say" id="cSay">You kneel. The little door slides open.</p><div class="w-opts" id="cOpts"></div><button class="w-x" type="button" data-x>Leave</button>`);
+  const say=(t,sp=true)=>{c.querySelector('#cSay').textContent=t;if(sp)speak(t,{pitch:.62,rate:.82,vol:.7})};const opts=(list,fn)=>{const o=c.querySelector('#cOpts');o.innerHTML='';list.forEach(([k,t])=>{const b=document.createElement('button');b.type='button';b.className='w-opt';b.textContent=t;b.onclick=()=>fn(k,t);o.appendChild(b)})};
+  setTimeout(()=>{say('In the name of the Father, and of the Son, and of the Holy Spirit. How long has it been since your last confession?');opts(OPEN.map(([k,t])=>[k,t]),k=>{const r=OPEN.find(x=>x[0]===k)[2];say(r+' What would you like to confess?');pickSins()})},700);
+  function pickSins(){const o=c.querySelector('#cOpts');o.innerHTML='<div class="w-sins"></div><input class="w-in" id="cOwn" maxlength="140" placeholder="Something else, in your own words"><button class="pill" type="button" id="cGo">Confess</button>';const box=o.querySelector('.w-sins');const chosen=new Set();
+    SINS.forEach(([k,t])=>{const b=document.createElement('button');b.type='button';b.className='w-chip';b.textContent=t;b.onclick=()=>{chosen.has(k)?chosen.delete(k):chosen.add(k);b.classList.toggle('on')};box.appendChild(b)});
+    o.querySelector('#cGo').onclick=()=>{const own=o.querySelector('#cOwn').value.trim();if(!chosen.size&&!own){say('Take your time. There is no queue.',false);return}const lines=[...chosen].map(k=>SINS.find(x=>x[0]===k)[2]);if(own)lines.push('That took courage to say. Make it right where you can, and let the rest go.');
+      lines.push(['For your penance, sit in this church for one quiet minute before you leave.','For your penance, light a candle for someone who annoyed you this week.','For your penance, make one thing badly, on purpose, and enjoy it.'][Math.random()*3|0]);lines.push('God forgives you, and so should you. Go in peace.');
+      o.innerHTML='';let i=0;const step=()=>{if(i>=lines.length){opts([['amen','Thanks be to God']],()=>{CHURCH.done('confess');closePanel();FX.chord([60,64,67,72],3.5,.04);msg('You step out. The church seems a little brighter.')});return}const t=lines[i++];c.querySelector('#cSay').textContent=t;speak(t,{pitch:.62,rate:.82,vol:.7},()=>setTimeout(step,500))};step()}}
+  c.querySelector('[data-x]').onclick=()=>{hushVoice();closePanel()}}
+function openPrayer(){seatAt('kneel',10.2,33,.62,0,.5);const c=panel('',`<p class="w-who">Our Lady of the Haze</p><p class="w-say" id="pSay">You kneel. The stone is cold through your knees.</p><div class="w-opts" id="pOpts"></div><button class="w-x" type="button" data-x>Stand up</button>`);
+  const say=t=>c.querySelector('#pSay').textContent=t;const o=c.querySelector('#pOpts');
+  const menu=()=>{o.innerHTML='';[['of','Our Father'],['hm','Hail Mary'],['for','Pray for someone'],['thanks','Give thanks'],['help','Ask for help'],['quiet','One minute of silence']].forEach(([k,t])=>{const b=document.createElement('button');b.type='button';b.className='w-opt';b.textContent=t;b.onclick=()=>run(k);o.appendChild(b)})};
+  const lines=(L,then)=>{o.innerHTML='';let i=0;FX.chord([50,57,62],L.length*2.2,.03);const st=()=>{if(i>=L.length){then&&then();return}say(L[i++]);setTimeout(st,2100)};st()};
+  const finish=()=>{CHURCH.done('pray');FX.chord([62,66,69,74],3,.035);setTimeout(menu,600)};
+  function run(k){if(k==='of')lines(OUR_FATHER,finish);else if(k==='hm')lines(HAIL_MARY,finish);
+    else if(k==='for'||k==='help'){o.innerHTML=`<input class="w-in" id="pIn" maxlength="${k==='for'?40:200}" placeholder="${k==='for'?'Their name':'Say it plainly. Only you will see this.'}"><button class="pill" type="button" id="pGo">Amen</button>`;o.querySelector('#pIn').focus();o.querySelector('#pGo').onclick=()=>{const v=o.querySelector('#pIn').value.trim();if(k==='for'){lines([v?'For '+v+'.':'For them.','Keep them safe tonight.','Let them know, somehow, that someone thought of them today.','Amen.'],()=>{CHURCH.a_candle();finish()})}else lines(['You said it. That is most of it.','Let it rest here for a while.','Amen.'],finish)}}
+    else if(k==='thanks'){o.innerHTML='';[['For today','For today, which was not nothing.'],['For someone','For the people who stayed.'],['For something small','For coffee, and dry socks, and the light at four o\'clock.']].forEach(([t,l])=>{const b=document.createElement('button');b.type='button';b.className='w-opt';b.textContent=t;b.onclick=()=>lines([l,'Thank you.','Amen.'],finish);o.appendChild(b)})}
+    else if(k==='quiet'){o.innerHTML='';let n=60;say('Silence. 60');const iv=setInterval(()=>{n--;say(n>0?'Silence. '+n:'');if(n<=0||wPanel.hidden){clearInterval(iv);if(!wPanel.hidden){bell(196,.18);finish();say('Amen.')}}},1000)}}
+  menu();c.querySelector('[data-x]').onclick=closePanel}
+function openBook(){let mine=[];try{mine=JSON.parse(localStorage.getItem('nd-int')||'[]')}catch(e){}const pick3=INTENTIONS.slice().sort(()=>Math.random()-.5).slice(0,4);
+  const c=panel('paper',`<p class="w-who">Book of intentions</p><div class="w-book">${mine.slice(-2).concat(pick3).map(t=>`<p>${esc(t)}</p>`).join('')}</div><textarea class="w-in" id="bIn" maxlength="160" rows="2" placeholder="Leave yours. It stays in the book on this device."></textarea><div class="w-row"><button class="pill" type="button" id="bGo">Leave it in the book</button><button class="w-x" type="button" data-x>Close</button></div>`);
+  CHURCH.done('book');c.querySelector('#bGo').onclick=()=>{const v=c.querySelector('#bIn').value.trim();if(!v)return;mine.push(v);try{localStorage.setItem('nd-int',JSON.stringify(mine.slice(-20)))}catch(e){}msg('Written. Someone will read it.');closePanel()};c.querySelector('[data-x]').onclick=closePanel}
+const KEYMAP={a:60,w:61,s:62,e:63,d:64,f:65,t:66,g:67,y:68,h:69,u:70,j:71,k:72,o:73,l:74,p:75,';':76};
+function openOrgan(){seatAt('organ',-16.4,48,.6,Math.PI,.62);const whites=[60,62,64,65,67,69,71,72,74,76,77,79,81,83,84],blacks=[61,63,66,68,70,73,75,78,80,82];const kn=m=>Object.keys(KEYMAP).find(k=>KEYMAP[k]===m)||'';
+  const c=panel('wide',`<div class="w-row"><p class="w-who">The organ</p><div class="w-stops">${['flute','principal','reed','full'].map(s=>`<button type="button" class="w-chip${ORG.stop===s?' on':''}" data-stop="${s}">${s}</button>`).join('')}</div></div><div class="w-keys2">${whites.map(m=>`<button type="button" class="wk" data-m="${m}"><span>${kn(m).toUpperCase()}</span></button>`).join('')}${blacks.map(m=>{const i=whites.filter(w=>w<m).length;return`<button type="button" class="bk" data-m="${m}" style="left:calc(${i}*100%/15 - 100%/40)"><span>${kn(m).toUpperCase()}</span></button>`}).join('')}</div><div class="w-row"><button class="pill ghost" type="button" id="oHymn">Play Hymn 100</button><span class="g-note">Keys A to ; play. Hold for long notes.</span><button class="w-x" type="button" data-x>Get up</button></div>`);
+  c.querySelectorAll('[data-m]').forEach(b=>{const m=+b.dataset.m;b.addEventListener('pointerdown',e=>{e.preventDefault();orgOn(m);b.classList.add('on');CHURCH.done('organ')});['pointerup','pointerleave','pointercancel'].forEach(ev=>b.addEventListener(ev,()=>{orgOff(m);b.classList.remove('on')}))});
+  c.querySelectorAll('[data-stop]').forEach(b=>b.onclick=()=>{ORG.stop=b.dataset.stop;c.querySelectorAll('[data-stop]').forEach(x=>x.classList.toggle('on',x===b))});
+  ORGUI.light=(m,on)=>{const b=c.querySelector(`[data-m="${m}"]`);b&&b.classList.toggle('on',!!on)};c.querySelector('#oHymn').onclick=playHymn;c.querySelector('[data-x]').onclick=closePanel}
+
+/* ---- input ---- */
+addEventListener('keydown',e=>{if(!WALK.mode)return;const k=e.key.toLowerCase();if(e.target.closest&&e.target.closest('input,textarea'))return;
+  if(WALK.state==='organ'&&KEYMAP[k]!==undefined){e.preventDefault();if(!e.repeat){orgOn(KEYMAP[k]);ORGUI.light(KEYMAP[k],1);CHURCH.done('organ')}return}
+  if([' ','arrowup','arrowdown','arrowleft','arrowright'].includes(k))e.preventDefault();if(e.repeat)return;
+  if(k==='escape'){if(!wPanel.hidden)closePanel();else if(WALK.state==='sit')WALK.state='walk';return}
+  if(WALK.mode!=='walk')return;
+  if(WALK.state==='sit'&&(k==='w'||k==='e'||k==='arrowup'||k===' ')){WALK.state='walk';return}
+  if(WALK.state!=='walk')return;
+  if(k==='w'||k==='arrowup'){const t=performance.now();if(t-WALK.lastW<300)WALK.run=true;WALK.lastW=t}
+  if(k===' '&&WALK.ground){WALK.vy=5.3;WALK.ground=false}
+  if(k==='e'){const s=frontSpot();if(s)CHURCH.use(s.act)}
+  if(k==='x'){FX.clap();if(WALK.inside)msg('One. Two. Three. Four.',2400)}
+  if(k==='c')WALK.crouch=!WALK.crouch});
+addEventListener('keyup',e=>{const k=e.key.toLowerCase();if(WALK.state==='organ'&&KEYMAP[k]!==undefined){orgOff(KEYMAP[k]);ORGUI.light(KEYMAP[k],0)}if(k==='w'||k==='arrowup')WALK.run=false});
+$('#wLeave').onclick=()=>CHURCH.leave();
+$('#wMute').onclick=e=>{SPEAK.mute=!SPEAK.mute;e.currentTarget.textContent=SPEAK.mute?'Voices off':'Voices on';if(SPEAK.mute)hushVoice()};
+$('#wUse').onclick=()=>{if(WALK.state==='sit'){WALK.state='walk';return}const s=frontSpot();if(s)CHURCH.use(s.act)};
+$('#wJump').onclick=()=>{if(WALK.ground&&WALK.state==='walk'){WALK.vy=5.3;WALK.ground=false}};
+{const j=$('#wJoy'),k=j.querySelector('i');let id=null,c0=null;j.addEventListener('pointerdown',e=>{id=e.pointerId;c0={x:e.clientX,y:e.clientY};j.setPointerCapture(id);e.stopPropagation()});
+  j.addEventListener('pointermove',e=>{if(e.pointerId!==id)return;const dx=e.clientX-c0.x,dy=e.clientY-c0.y,l=Math.min(1,Math.hypot(dx,dy)/46),a=Math.atan2(dy,dx);WALK.joy={x:Math.cos(a)*l,y:Math.sin(a)*l};k.style.transform=`translate(${WALK.joy.x*34}px,${WALK.joy.y*34}px)`});
+  const up=()=>{id=null;WALK.joy={x:0,y:0};k.style.transform=''};j.addEventListener('pointerup',up);j.addEventListener('pointercancel',up)}
+
+/* ---- every frame while walking ---- */
+const _f=new THREE.Vector3(),_e=new THREE.Vector3();
+WALK.frame=function(dt,time){
+  if(this.mode==='ride'){const R=this.ride;R.t=Math.min(1,R.t+dt/Math.max(5,BRL/13));const e=R.t<.5?2*R.t*R.t:1-Math.pow(-2*R.t+2,2)/2;const p=branch.getPointAt(e),tg=branch.getTangentAt(Math.min(.999,e));
+    camera.position.set(p.x,BRY(e)+1.62+Math.abs(Math.sin(e*BRL*.9))*.03,p.z);const h=Math.atan2(-tg.x,-tg.z)+R.lh;_f.set(-Math.sin(h)*Math.cos(R.lp),Math.sin(R.lp),-Math.cos(h)*Math.cos(R.lp));camera.lookAt(_e.copy(camera.position).add(_f));
+    if(R.t>=1)CHURCH.enter(new THREE.Vector3(p.x,CH_Y,p.z),h);return}
+  const st=this.state;let eyeH=this.crouch?1.05:1.62;
+  if(st==='walk'){let f=0,r=0;if(keys['w']||keys['arrowup'])f+=1;if(keys['s']||keys['arrowdown'])f-=1;if(keys['d'])r+=1;if(keys['a'])r-=1;if(keys['arrowleft'])this.h+=dt*1.9;if(keys['arrowright'])this.h-=dt*1.9;f-=this.joy.y;r+=this.joy.x;
+    const l=Math.hypot(f,r);if(l>1){f/=l;r/=l}const run=(this.run||keys['shift'])&&f>0&&!this.crouch;const sp=this.crouch?1.6:run?7:3.3;
+    const fx=-Math.sin(this.h),fz=-Math.cos(this.h),rx=Math.cos(this.h),rz=-Math.sin(this.h);const vx=(fx*f+rx*r)*sp*dt,vz=(fz*f+rz*r)*sp*dt;
+    const P=this.pos;if(!hitCol(P.x+vx,P.z,P.y))P.x+=vx;if(!hitCol(P.x,P.z+vz,P.y))P.z+=vz;
+    const sup=supportAt(P.x,P.z,P.y);this.vy-=16*dt;P.y+=this.vy*dt;if(P.y<=sup){if(!this.ground&&this.vy<-4)FX.land();P.y=sup;this.vy=0;this.ground=true}else if(P.y>sup+.05)this.ground=false;
+    const moved=Math.hypot(vx,vz);if(this.ground&&moved>0){this.bob+=moved*(run?2.2:2.6);this.stepD+=moved;if(this.stepD>(run?1.1:.72)){this.stepD=0;FX.step()}}
+    const s=CX-P.x;if(s<YD.s0-3){CHURCH.leave();return}
+    // labyrinth center
+    const lx=CZ-P.z;if(Math.hypot(lx,s-48)<.7&&!this.labT){this.labT=1;FX.chord([57,64,69,73],4,.05);msg('The center. Whoever walked here before you walked here too.');CHURCH.done('labyrinth')}if(Math.hypot(lx,s-48)>2)this.labT=0}
+  let ex,ey,ez;if(st==='walk'){ex=this.pos.x;ey=this.pos.y+eyeH+Math.sin(this.bob)*.035;ez=this.pos.z}else{const S=this.seat;ex=S.x;ez=S.z;ey=(S.y??FY+.5)+(st==='sit'?.78:st==='kneel'?.52:st==='organ'?.62:.5)}
+  if(this.dip)ey-=Math.max(0,Math.sin(Math.min(1,(time-this.dip)/.9)*Math.PI))*.25;
+  let pp=this.p;if(this.nod)pp-=Math.max(0,Math.sin(Math.min(1,(time-this.nod)/.8)*Math.PI))*.3;
+  camera.position.set(ex,ey,ez);_f.set(-Math.sin(this.h)*Math.cos(pp),Math.sin(pp),-Math.cos(this.h)*Math.cos(pp));camera.lookAt(_e.copy(camera.position).add(_f));
+  // the room: inside dims the daylight and warms the haze
+  const s=CX-ex,lx=CZ-ez;this.inside=insideLocal(lx,s);this.inK+=((this.inside?1:0)-this.inK)*Math.min(1,dt*2.2);const k=this.inK;
+  hemi.intensity=.72-.36*k;sunL.intensity=.42-.3*k;scene.fog.color.copy(fogBase).lerp(fogIn,k*.85);scene.background=scene.fog.color;
+  // prompt for what is in front of you
+  const sp=st==='walk'?frontSpot():null;if(sp){wPrompt.hidden=false;wPrompt.querySelector('span').textContent=sp.label}else wPrompt.hidden=st!=='sit';if(st==='sit')wPrompt.querySelector('span').textContent='Stand up (W)';
+};
+// small life in the room: flames, rope, cat, preacher, sweeper, dust
+acts.push((time,dt)=>{flames.forEach(o=>{if(!o.f.visible)return;const k=1+Math.sin(time*13+o.ph)*.08+Math.sin(time*7.3+o.ph*2)*.06;o.f.scale.y=(o.f.scale.x>.06?.14:.1)*k;o.g.material.opacity=.45+Math.sin(time*9+o.ph)*.06});
+  if(rope.userData.pull!==undefined){const t=time-rope.userData.pull;rope.position.y=t<1.6?-Math.sin(Math.min(1,t/1.6)*Math.PI)*.45:0}
+  const pt=CHCAT.userData.pet;CHCAT.children[0].scale.y=.75+Math.sin(time*(pt&&time-pt<3?5:1.6))*.03;
+  const pr=PRIEST.userData;if(CHURCH.serm&&!CHURCH.serm.stop){const a=Math.sin(time*1.7);pose(PRIEST,[-.6-.5*Math.max(0,a),.3],[-1.2-.4*Math.max(0,-a),-.4])}else if(!pr.talking){pose(PRIEST,[-.3,.1],[-.3,-.1]);PRIEST.rotation.y+=((Math.PI/2-.3)-PRIEST.rotation.y)*.05}
+  {const d=SWEEP.userData;const w=toWorld(-4+Math.sin(time*.18)*2.2,5+Math.cos(time*.11)*1.5);if(!d.talking){SWEEP.position.x=w.x;SWEEP.position.z=w.z;SWEEP.rotation.y=time*.18%6.28}d.limbs.ra.rotation.x=-.5+Math.sin(time*2.4)*.35;d.limbs.la.rotation.x=-.6+Math.sin(time*2.4)*.3}
+  dust.position.y=Math.sin(time*.07)*.6;dust.position.x=Math.sin(time*.05)*.4;
+  if(CHURCH.serm&&!CHURCH.serm.stop&&WALK.mode&&!WALK.inside&&WALK.inK<.05){CHURCH.serm.stop=1;CHURCH.serm=null;hushVoice();hush()}});
+
 /* ---------- route, looking around, talking ---------- */
 stops.sort((a,b)=>a.u-b.u);
 const END=HOME_U-.022;const toScroll=u=>Math.min(1,Math.max(0,u)/END)*maxScroll();
@@ -675,14 +1224,14 @@ const ray=new THREE.Raycaster(),ndc=new THREE.Vector2(9,9);let hovered=null,hove
 let yaw=0,pitch=0,yawT=0,pitchT=0,drag=null;const keys={};
 canvas.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY,moved:0,type:e.pointerType}});
 addEventListener('pointermove',e=>{ndc.set(e.clientX/innerWidth*2-1,-(e.clientY/innerHeight)*2+1);pIn=true;tag.style.left=e.clientX+'px';tag.style.top=e.clientY+'px';
-  if(drag){const dx=e.clientX-drag.x,dy=e.clientY-drag.y;drag.moved+=Math.abs(dx)+Math.abs(dy);drag.x=e.clientX;drag.y=e.clientY;if(drag.moved>4){yawT+=dx*.0042;if(drag.type==='mouse')pitchT=Math.max(-.45,Math.min(.55,pitchT+dy*.003));canvas.style.cursor='grabbing'}}});
+  if(drag){const dx=e.clientX-drag.x,dy=e.clientY-drag.y;drag.moved+=Math.abs(dx)+Math.abs(dy);drag.x=e.clientX;drag.y=e.clientY;if(drag.moved>4){if(WALK.mode)WALK.look(dx,dy);else{yawT+=dx*.0042;if(drag.type==='mouse')pitchT=Math.max(-.45,Math.min(.55,pitchT+dy*.003))}canvas.style.cursor='grabbing'}}});
 addEventListener('pointerup',()=>{if(drag&&drag.moved<6)clickAt();drag=null;canvas.style.cursor=''});addEventListener('pointercancel',()=>drag=null);
 document.addEventListener('pointerleave',()=>{pIn=false;ndc.set(9,9)});
 addEventListener('keydown',e=>{if(e.target.closest&&e.target.closest('input'))return;keys[e.key.toLowerCase()]=true;if(e.key==='r'||e.key==='R'){yawT=0;pitchT=0}});addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
 faceBtn.onclick=()=>{yawT=Math.round(yawT/6.2832)*6.2832;pitchT=0};
 let talker=null,talkEnd=0,hoverA=null;
-function clickAt(){if(hoverA){const k=hoverA.userData.kind;SOUND[k]&&SOUND[k]();hoverA.userData.react=clock.elapsedTime;return}if(hoverP){talk(hoverP);return}if(hovered&&hovered.userData.info){const i=hovered.userData.info;if(i.game){GAMES.open(i.game);return}location.href=i.href;return}if(talker)hush()}
-function talk(p){if(talker&&talker!==p)hush();talker=p;talkEnd=clock.elapsedTime+9;p.userData.talking=true;bubble.querySelector('p').textContent=FACTS[factI++%FACTS.length];bubble.hidden=false;bubble.classList.remove('pop');void bubble.offsetWidth;bubble.classList.add('pop')}
+function clickAt(){if(hoverA){const k=hoverA.userData.kind;SOUND[k]&&SOUND[k]();hoverA.userData.react=clock.elapsedTime;return}if(hoverP){if(hoverP.userData.onClick){hoverP.userData.onClick();return}talk(hoverP);return}if(hovered&&hovered.userData.info){const i=hovered.userData.info;if(i.act){CHURCH.use(i.act,i);return}if(i.go){CHURCH.go(i.go);return}if(i.to!==undefined){scrollTo({top:toScroll(i.to),behavior:reduce?'auto':'smooth'});return}if(i.game){GAMES.open(i.game);return}location.href=i.href;return}if(talker)hush()}
+function talk(p){if(talker&&talker!==p)hush();talker=p;talkEnd=clock.elapsedTime+9;p.userData.talking=true;bubble.querySelector('p').textContent=p.userData.lines?p.userData.lines[(p.userData.li=(p.userData.li??-1)+1)%p.userData.lines.length]:FACTS[factI++%FACTS.length];bubble.querySelector('small').textContent=p.userData.who||'Local · click anyone else for more';bubble.hidden=false;bubble.classList.remove('pop');void bubble.offsetWidth;bubble.classList.add('pop')}
 function hush(){if(!talker)return;const d=talker.userData;d.talking=false;if(d.pose)pose(talker,...d.pose);else pose(talker,[0,0],[0,0]);talker=null;bubble.hidden=true}
 async function useFile(f){if(!f||!/^image\//.test(f.type))return;try{userImg=await createImageBitmap(f);redraw(yourTex)}catch(e){console.warn(e)}}
 $('#file').addEventListener('change',e=>useFile(e.target.files[0]));addEventListener('dragover',e=>e.preventDefault());addEventListener('drop',e=>{e.preventDefault();useFile(e.dataTransfer.files[0])});
@@ -772,18 +1321,19 @@ return{open}})();
 /* ---------- loop ---------- */
 const km=$('#km'),place=$('#place'),cue=$('#cue'),arrive=$('#arrive'),start=$('#start');let uCur=0,camOff=4;const clock=new THREE.Clock();const ahead=new THREE.Vector3(),dir=new THREE.Vector3(),headW=new THREE.Vector3();
 function frame(){const dt=Math.min(.05,clock.getDelta()),time=clock.elapsedTime;
+  let arriveK=0;if(WALK.mode){WALK.frame(dt,time);faceBtn.hidden=true}else{
   const target=Math.min(1,Math.max(0,scrollY/maxScroll()))*END;uCur=reduce?target:uCur+(target-uCur)*Math.min(1,dt*3);
   // walk on the sidewalk in town, the shoulder outside it, the middle of the bridge
   const inTown=uCur>TOWN0+.004&&uCur<TOWN1-.004,onBridge=Math.abs(uCur-BR)*RL<34;const offT=onBridge?2.5:inTown?6.2:3.9;camOff+=(offT-camOff)*Math.min(1,dt*2.5);
   const cf=frameAt(uCur,1,camOff),la=frameAt(uCur+.012,1,camOff);
   if(keys['a']||keys['arrowleft']||keys['q'])yawT+=dt*1.6;if(keys['d']||keys['arrowright']||keys['e'])yawT-=dt*1.6;
   yaw+=(yawT-yaw)*Math.min(1,dt*6);pitch+=(pitchT-pitch)*Math.min(1,dt*6);
-  const arriveK=Math.max(0,Math.min(1,(uCur-(END-.035))/.035));
+  arriveK=Math.max(0,Math.min(1,(uCur-(END-.035))/.035));
   const lift=bridgeLift(uCur)+(inTown?.2:0);
   camera.position.set(cf.pos.x,cf.pos.y+lift+1.62+(reduce?0:Math.abs(Math.sin(uCur*RL*.9))*.035),cf.pos.z);
   dir.set(la.pos.x-cf.pos.x,0,la.pos.z-cf.pos.z).normalize().applyAxisAngle(new THREE.Vector3(0,1,0),yaw);const slope=(la.pos.y-cf.pos.y)/Math.max(.01,Math.hypot(la.pos.x-cf.pos.x,la.pos.z-cf.pos.z));
   ahead.copy(camera.position).addScaledVector(dir,10);ahead.y+=Math.tan(pitch)*10+slope*10*.6-.25;if(arriveK>0&&cottage&&Math.abs(yaw)<.6){const h=cottage.position;ahead.lerp(new THREE.Vector3(h.x,h.y+3.2,h.z),arriveK*.85)}camera.lookAt(ahead);
-  faceBtn.hidden=Math.abs(((yaw%6.2832)+9.4248)%6.2832-3.1416)<.35&&Math.abs(pitch)<.15;
+  faceBtn.hidden=Math.abs(((yaw%6.2832)+9.4248)%6.2832-3.1416)<.35&&Math.abs(pitch)<.15;}
   // traffic: each car keeps its own pace; nothing follows you
   traffic.forEach(c=>{const d=c.userData;if(!reduce){d.u+=(d.side>0?1:-1)*d.sp*dt;if(d.side>0&&d.u>TOWN1+.06)d.u=TOWN0-.04;if(d.side<0&&d.u<.01)d.u=.96}const f=frameAt(d.u,d.side,1.8);c.position.copy(f.pos);c.position.y+=bridgeLift(d.u)+(d.u>TOWN0&&d.u<TOWN1?.07:0);c.rotation.y=f.yaw+(d.side>0?0:Math.PI)});
   people.forEach(p=>{const d=p.userData;
@@ -810,13 +1360,13 @@ function frame(){const dt=Math.min(.05,clock.getDelta()),time=clock.elapsedTime;
   if(!reduce)slabsFar.forEach(m=>{m.position.y+=Math.sin(time*.25+m.userData.ph)*.004;m.rotation.y+=.0005});
   live.forEach(m=>m.uniforms.t.value=time);waterMat.uniforms.t.value=time;
   // hover: a design opens its tool, a person says hello
-  ray.setFromCamera(ndc,camera);const hits=pIn&&!(drag&&drag.moved>4)?ray.intersectObjects(pick.concat(peopleMeshes,animalMeshes),false):[];const hit=hits.find(x=>x.distance<60);
+  ray.setFromCamera(ndc,camera);const hits=pIn&&!(drag&&drag.moved>4)?ray.intersectObjects(pick.concat(peopleMeshes,animalMeshes),false):[];const hit=hits.find(x=>{const i=x.object.userData.info;return i&&i.act?WALK.mode==='walk'&&x.distance<8:x.distance<60});
   const ha=hit&&hit.object.userData.animal||null,hp=!ha&&hit&&hit.object.userData.person||null,h=hit&&!hp&&!ha?hit.object:null;
-  if(h!==hovered||hp!==hoverP||ha!==hoverA){hovered=h;hoverP=hp;hoverA=ha;canvas.style.cursor=h||hp||ha?'pointer':'';if(ha){tag.querySelector('small').textContent=NAMES[ha.userData.kind]||'Animal';tag.querySelector('b').textContent='Say hi';tag.querySelector('em').textContent='Click to hear it'}if(h){const i=h.userData.info;tag.querySelector('small').textContent=i.k;tag.querySelector('b').textContent=i.n;tag.querySelector('em').textContent=i.game?'Click to sit down':'Click to open it in the studio'}
+  if(h!==hovered||hp!==hoverP||ha!==hoverA){hovered=h;hoverP=hp;hoverA=ha;canvas.style.cursor=h||hp||ha?'pointer':'';if(ha){tag.querySelector('small').textContent=NAMES[ha.userData.kind]||'Animal';tag.querySelector('b').textContent='Say hi';tag.querySelector('em').textContent='Click to hear it'}if(h){const i=h.userData.info;tag.querySelector('small').textContent=i.k;tag.querySelector('b').textContent=i.n;tag.querySelector('em').textContent=i.act?'Click, or press E':i.go?'Click to walk there':i.to!==undefined?'Click to go':i.game?'Click to sit down':'Click to open it in the studio'}
     else if(hp){tag.querySelector('small').textContent='Local';tag.querySelector('b').textContent='Say hello';tag.querySelector('em').textContent='Click to hear something about the studio'}tag.classList.toggle('on',!!(h||hp||ha))}
   pick.forEach(o=>{const on=o===hovered;const m=o.material;if(m.uniforms)m.uniforms.hov.value+=((on?1:0)-m.uniforms.hov.value)*.12;else if(m.color&&m.type==='MeshBasicMaterial'){const c=m.color.r+((on?1:.93)-m.color.r)*.12;m.color.setScalar(c)}});
   km.textContent=(uCur/END*3.2).toFixed(1);let near=0,best=9;stops.forEach((s,i)=>{const d=Math.abs(s.u-Math.min(uCur+.025,HOME_U));if(d<best){best=d;near=i}s.el.classList.toggle('past',s.u<uCur)});stops.forEach((s,i)=>i===near?s.el.setAttribute('aria-current','step'):s.el.removeAttribute('aria-current'));
-  place.textContent=uCur<TOWN0-.012?'Outskirts':stops[near].name;
+  place.textContent=uCur<TOWN0-.012&&Math.abs(uCur-CJ_U)>.012?'Outskirts':stops[near].name;
   cue.style.opacity=Math.max(0,1-uCur*30);start.style.opacity=Math.max(0,1-uCur*22);start.style.visibility=uCur>.05?'hidden':'visible';arrive.style.opacity=arriveK;arrive.style.visibility=arriveK<.02?'hidden':'visible';
   skyDome.position.copy(camera.position);renderer.render(scene,camera);requestAnimationFrame(frame)}
 requestAnimationFrame(frame);
