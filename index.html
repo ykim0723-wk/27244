@@ -175,6 +175,15 @@ a{color:inherit}
 .app-side input[type=range]{width:100%;accent-color:#0d0d0c}
 .art-box{display:flex;flex-direction:column;gap:8px;padding:10px;border-radius:12px;background:rgba(13,13,12,.04)}.art-text{display:grid;grid-template-columns:1fr auto auto;gap:6px}.art-text .w-in{margin:0}.art-text input[type=color]{width:38px;height:38px;border:0;padding:0;background:none}
 @media (max-width:760px){.app-body{grid-template-columns:1fr;grid-template-rows:minmax(240px,1fr) minmax(0,auto)}.app-win{height:calc(100vh - 28px)}.app-side{max-height:44vh}}
+
+.g-tabs{flex-wrap:wrap}
+.board.ck .sq{font-size:0}.man{display:block;width:72%;height:72%;border-radius:50%;box-shadow:inset 0 -4px 0 rgba(0,0,0,.25),0 2px 4px rgba(0,0,0,.25)}.man.mb{background:#2a2724}.man.mw{background:#f1ece2;box-shadow:inset 0 -4px 0 rgba(0,0,0,.15),0 2px 4px rgba(0,0,0,.25),inset 0 0 0 1px rgba(0,0,0,.2)}
+.man.king{position:relative}.man.king::after{content:"";position:absolute;inset:30%;border-radius:50%;box-shadow:0 0 0 3px #c7a35b}
+.lb-form{display:flex;flex-direction:column;gap:8px;padding:12px;border-radius:14px;background:rgba(122,136,117,.14);width:100%;box-sizing:border-box}.lb-form .w-in{margin:0}.lb-form .pill[disabled]{opacity:.4}
+.lb-cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.lb-col ol{margin:0;padding:0 0 0 22px;font:500 13px/1.9 var(--mono)}.lb-col li span{display:inline-block;max-width:calc(100% - 40px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:bottom}.lb-col li b{float:right;font-variant-numeric:tabular-nums}
+.lb-where{margin-top:14px}
+@media (max-width:640px){.lb-cols{grid-template-columns:1fr}}
+.lb-col li.g-note{list-style:none;margin-left:-22px}
 </style>
 </head>
 <body>
@@ -200,7 +209,7 @@ a{color:inherit}
 <div class="dash"><div class="odo">Km<b id="km">0.0</b><span id="place">Outskirts</span></div><div class="cue" id="cue"><i></i>Scroll to walk · drag to look around</div></div>
 <div class="bubble" id="bubble" role="status" hidden><p></p><small>Local · click anyone else for more</small></div>
 <button class="pill ghost face" id="face" type="button" hidden>Face the road</button>
-<div class="games" id="games" hidden><div class="g-win" role="dialog" aria-label="Games with the locals"><div class="g-head"><div class="g-tabs"><button type="button" data-g="chess">Chess</button><button type="button" data-g="poker">Hold'em</button></div><button class="g-close" type="button" aria-label="Get up from the table">Leave table</button></div><div class="g-body"></div></div></div>
+<div class="games" id="games" hidden><div class="g-win" role="dialog" aria-label="Games with the locals"><div class="g-head"><div class="g-tabs"><button type="button" data-g="chess">Chess</button><button type="button" data-g="checkers">Checkers</button><button type="button" data-g="poker">Hold'em</button><button type="button" data-g="board">Leaderboard</button></div><button class="g-close" type="button" aria-label="Get up from the table">Leave table</button></div><div class="g-body"></div></div></div>
 <div class="tag" id="tag" aria-hidden="true"><small></small><b></b><em>Click to open it in the studio</em></div>
 <div class="arrive" id="arrive">
   <h1>Create something.<span>Create anything.</span></h1>
@@ -746,7 +755,8 @@ dogWalker(TU(.2),1,7.8,1);dogWalker(TU(.55),-1,6.2,-1);dogWalker(TU(.7),-1,5.4,1
     seats.forEach(([a,who])=>{const ch=new THREE.Group();const st=new THREE.Mesh(new THREE.BoxGeometry(.42,.05,.42),tm);st.position.y=.46;ch.add(st);const bk=new THREE.Mesh(new THREE.BoxGeometry(.42,.45,.04),tm);bk.position.set(0,.7,-.2);ch.add(bk);
       const r=round?1.05:.85,cx=x+Math.sin(yaw+a)*r,cz=z+Math.cos(yaw+a)*r;ch.position.set(cx,ground(cx,cz)+.09,cz);ch.rotation.y=yaw+a+Math.PI;scene.add(ch);
       if(who){const p=person();placeP(p,cx,cz,yaw+a+Math.PI,.09+.1);sit(p);p.userData.custom=true;p.userData.ph=rnd()*6;act(t=>{if(p.userData.talking)return;pose(p,[-1.1+Math.sin(t*.9+p.userData.ph)*.08,.15],[-1.15,-.15]);p.userData.head.rotation.x=.35})}});return g}
-  const c1=frameAt(PZ-.011,1,12.5),c2=frameAt(PZ-.002,1,14.5);
+  const c1=frameAt(PZ-.011,1,12.5),c2=frameAt(PZ-.002,1,14.5),c3=frameAt(PZ-.021,1,13.4);const checkT=T_(512,512,(x,W,H)=>{const c=W/8;for(let r=0;r<8;r++)for(let f=0;f<8;f++){x.fillStyle=(r+f)%2?'#a89e8a':'#ece6d8';x.fillRect(f*c,r*c,c,c);if((r+f)%2&&(r<3||r>4)){x.fillStyle=r<3?'#efe9dd':'#2a2724';x.beginPath();x.arc(f*c+c/2,r*c+c/2,c*.36,0,7);x.fill();x.strokeStyle='rgba(0,0,0,.3)';x.lineWidth=3;x.stroke()}}});
+  table(c3.pos.x,c3.pos.z,c3.yaw,lam({map:checkT}),false,{k:'Checkers',n:'Play checkers against a local',game:'checkers'},[[0,1],[Math.PI,0]]);
   table(c1.pos.x,c1.pos.z,c1.yaw,lam({map:boardT}),false,{k:'Chess',n:'Play chess against a local',game:'chess'},[[0,1],[Math.PI,0]]);
   table(c2.pos.x,c2.pos.z,c2.yaw,lam({map:feltT}),true,{k:"Hold'em",n:'Sit in on a hand of poker',game:'poker'},[[0,1],[2.1,1],[-2.1,0]]);stopAt(PZ-.011,'Games')}
 // someone reading on a bench by the fountain
@@ -1638,13 +1648,13 @@ const el=document.getElementById('games');const body=el.querySelector('.g-body')
 el.querySelector('.g-close').onclick=()=>close();el.addEventListener('pointerdown',e=>{if(e.target===el)close()});addEventListener('keydown',e=>{if(e.key==='Escape'&&!el.hidden)close()});
 el.querySelectorAll('.g-tabs button').forEach(b=>b.onclick=()=>{mode=b.dataset.g;render()});
 function open(m){mode=m||mode;el.hidden=false;render()}function close(){el.hidden=true}
-function render(){el.querySelectorAll('.g-tabs button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.g===mode)));mode==='chess'?chessUI():pokerUI()}
+function render(){el.querySelectorAll('.g-tabs button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.g===mode)));mode==='chess'?chessUI():mode==='poker'?pokerUI():mode==='checkers'?checkersUI():boardUI()}
 const say=t=>{const s=el.querySelector('.g-say');s.textContent=t};
 
 /* chess: full legal moves, a local who looks one move ahead and is a bit careless */
 const V={p:1,n:3,b:3.2,r:5,q:9,k:0};const G={'K':'♔','Q':'♕','R':'♖','B':'♗','N':'♘','P':'♙','k':'♚','q':'♛','r':'♜','b':'♝','n':'♞','p':'♟'};
 let C=null;
-function newChess(){C={b:['rnbqkbnr','pppppppp','........','........','........','........','PPPPPPPP','RNBQKBNR'].map(r=>r.split('')),turn:'w',cast:{K:1,Q:1,k:1,q:1},ep:null,sel:null,last:null,over:null,moves:0}}
+function newChess(){C={b:['rnbqkbnr','pppppppp','........','........','........','........','PPPPPPPP','RNBQKBNR'].map(r=>r.split('')),turn:'w',cast:{K:1,Q:1,k:1,q:1},ep:null,sel:null,last:null,over:null,moves:0};LB.start('chess')}
 const isW=p=>p!=='.'&&p===p.toUpperCase(),col=p=>p==='.'?null:isW(p)?'w':'b';
 function pseudo(st,c){const out=[],B=st.b;for(let r=0;r<8;r++)for(let f=0;f<8;f++){const p=B[r][f];if(col(p)!==c)continue;const t=p.toLowerCase();const add=(r2,f2,x={})=>{if(r2<0||r2>7||f2<0||f2>7)return false;const q=B[r2][f2];if(col(q)===c)return false;out.push(Object.assign({r,f,r2,f2},x));return q==='.'};
   if(t==='p'){const d=c==='w'?-1:1,s=c==='w'?6:1;if(B[r+d]&&B[r+d][f]==='.'){out.push({r,f,r2:r+d,f2:f});if(r===s&&B[r+2*d][f]==='.')out.push({r,f,r2:r+2*d,f2:f,dbl:1})}
@@ -1668,8 +1678,8 @@ function material(st){let s=0;st.b.forEach((row,r)=>row.forEach((p,f)=>{if(p==='
 function aiMove(){const ms=legal(C,'b');if(!ms.length)return;let best=null,bs=-1e9;ms.forEach(m=>{const n=apply(C,m);let sc=-material(n);const replies=legal(n,'w');if(!replies.length){const k=kingPos(n,'w');sc+=attacked(n,k[0],k[1],'w')?1000:0}
     else{let worst=1e9;replies.forEach(rm=>{const v=-material(apply(n,rm));if(v<worst)worst=v});sc=sc*.35+worst*.65}sc+=Math.random()*1.6;if(Math.random()<.12)sc+=Math.random()*3;if(sc>bs){bs=sc;best=m}});
   C.last=[best.r,best.f,best.r2,best.f2];C=Object.assign(apply(C,best),{last:C.last});checkEnd()}
-function checkEnd(){const c=C.turn,ms=legal(C,c);if(!ms.length){const k=kingPos(C,c);C.over=attacked(C,k[0],k[1],c)?(c==='w'?'They got you. Checkmate.':'Checkmate. You win.'):'Stalemate.'}else if(C.moves>300)C.over='Draw.'}
-function chessUI(){if(!C)newChess();const legalW=C.turn==='w'&&!C.over?legal(C,'w'):[];const targets=C.sel?legalW.filter(m=>m.r===C.sel[0]&&m.f===C.sel[1]):[];
+function checkEnd(){const c=C.turn,ms=legal(C,c);if(!ms.length){const k=kingPos(C,c);C.over=attacked(C,k[0],k[1],c)?(c==='w'?'They got you. Checkmate.':(LB.win('chess'),'Checkmate. You win.')):'Stalemate.'}else if(C.moves>300)C.over='Draw.'}
+function chessUI(){setTimeout(()=>LB.decorate('chess'));if(!C)newChess();const legalW=C.turn==='w'&&!C.over?legal(C,'w'):[];const targets=C.sel?legalW.filter(m=>m.r===C.sel[0]&&m.f===C.sel[1]):[];
   body.innerHTML=`<div class="g-chess"><div class="board" role="grid" aria-label="Chess board"></div><div class="g-side"><p class="g-say"></p><button class="pill ghost" type="button" data-a="new">New game</button><p class="g-note">You play white. Click a piece, then a square. Pawns promote to queens.</p></div></div>`;
   const bd=body.querySelector('.board');for(let r=0;r<8;r++)for(let f=0;f<8;f++){const sq=document.createElement('button');sq.type='button';sq.className='sq '+((r+f)%2?'d':'l');const p=C.b[r][f];sq.textContent=p==='.'?'':G[p];if(p!=='.')sq.classList.add(isW(p)?'w':'b');
     if(C.sel&&C.sel[0]===r&&C.sel[1]===f)sq.classList.add('sel');if(targets.some(m=>m.r2===r&&m.f2===f))sq.classList.add('to');if(C.last&&((C.last[0]===r&&C.last[1]===f)||(C.last[2]===r&&C.last[3]===f)))sq.classList.add('last');
@@ -1687,8 +1697,8 @@ function rank5(cs){const r=cs.map(c=>c>>2).sort((a,b)=>b-a),s=cs.map(c=>c&3);con
 function best7(cs){let b=-1;for(let i=0;i<7;i++)for(let j=i+1;j<7;j++){const h=cs.filter((_,k)=>k!==i&&k!==j);const v=rank5(h);if(v>b)b=v}return b}
 const CAT=['High card','Pair','Two pair','Three of a kind','Straight','Flush','Full house','Four of a kind','Straight flush'];
 function equity(hole,board,opp){let win=0,N=120;const known=new Set([...hole,...board]);for(let k=0;k<N;k++){const d=deck().filter(c=>!known.has(c));const bd=board.concat(d.splice(0,5-board.length));const me=best7(hole.concat(bd));let ok=true;for(let o=0;o<opp;o++){if(best7(d.splice(0,2).concat(bd))>me){ok=false;break}}if(ok)win++}return win/N}
-function newTable(){P={seats:[{n:'You',chips:1000},{n:'Ida',chips:1000},{n:'Bruno',chips:1000}],dealer:0,log:[]};newHand()}
-function newHand(){const live=P.seats.filter(s=>s.chips>0);if(live.length<2||P.seats[0].chips<=0){P.done=P.seats[0].chips>0?'You cleaned out the table.':'You are out of chips.';return}
+function newTable(){LB.start('poker');P={seats:[{n:'You',chips:1000},{n:'Ida',chips:1000},{n:'Bruno',chips:1000}],dealer:0,log:[]};newHand()}
+function newHand(){const live=P.seats.filter(s=>s.chips>0);if(live.length<2||P.seats[0].chips<=0){P.done=P.seats[0].chips>0?(LB.win('poker'),'You cleaned out the table.'):'You are out of chips.';return}
   P.d=deck();P.board=[];P.pot=0;P.street=0;P.dealer=(P.dealer+1)%3;P.seats.forEach(s=>{s.hole=s.chips>0?[P.d.pop(),P.d.pop()]:null;s.bet=0;s.fold=s.chips<=0;s.acted=false;s.show=false});
   const sb=next(P.dealer),bb=next(sb);post(sb,10);post(bb,20);P.cur=next(bb);P.high=20;P.msg='New hand. Blinds 10 / 20.';if(P.cur!==0)setTimeout(botLoop,600)}
 function next(i){for(let k=1;k<=3;k++){const j=(i+k)%3;if(!P.seats[j].fold&&P.seats[j].chips>0)return j}return i}
@@ -1703,12 +1713,50 @@ function win(ix,score){const share=Math.floor(P.pot/ix.length);ix.forEach(i=>P.s
 function botLoop(){if(!P||P.cur<=0||P.street>=4)return;const i=P.cur,s=P.seats[i];const opp=P.seats.filter((o,k)=>k!==i&&!o.fold).length;const eq=equity(s.hole,P.board,opp);const need=P.high-s.bet;const odds=need/(P.pot+need||1);const r=Math.random();
   let kind='call';if(eq<odds*.8&&need>0&&r>.25)kind='fold';else if(eq>.62&&r<.65)kind='raise';else if(r<.08)kind='raise';if(kind==='raise'&&s.chips<need+40)kind='call';act(i,kind)}
 const card=(c,hide)=>hide?'<span class="card back"></span>':`<span class="card ${(c&3)===1||(c&3)===2?'red':''}">${RK[c>>2].replace('T','10')}<small>${SU[c&3]}</small></span>`;
-function pokerUI(){if(!P)newTable();const me=P.seats[0];const myTurn=P.cur===0&&P.street<4&&!P.done;const need=P.high-me.bet;
+function pokerUI(){setTimeout(()=>LB.decorate('poker'));if(!P)newTable();const me=P.seats[0];const myTurn=P.cur===0&&P.street<4&&!P.done;const need=P.high-me.bet;
   body.innerHTML=`<div class="g-poker"><div class="seats">${P.seats.slice(1).map((s,k)=>`<div class="seat ${P.cur===k+1?'on':''} ${s.fold?'fold':''}"><b>${s.n}</b><span>${s.chips} chips${s.bet?` · bet ${s.bet}`:''}</span><div>${s.hole?s.hole.map(c=>card(c,!s.show)).join(''):''}</div></div>`).join('')}</div>
    <div class="felt"><div class="board">${[0,1,2,3,4].map(k=>P.board[k]!==undefined?card(P.board[k]):'<span class="card empty"></span>').join('')}</div><b class="pot">Pot ${P.pot}</b></div>
    <div class="seat me ${myTurn?'on':''}"><b>You</b><span>${me.chips} chips${me.bet?` · bet ${me.bet}`:''}</span><div>${me.hole?me.hole.map(c=>card(c)).join(''):''}</div></div>
    <p class="g-say"></p><div class="acts">${P.done?'<button class="pill" data-a="new">New table</button>':P.street>=4?'<button class="pill" data-a="deal">Deal next hand</button>':`<button class="pill ghost" data-a="fold" ${myTurn?'':'disabled'}>Fold</button><button class="pill ghost" data-a="call" ${myTurn?'':'disabled'}>${need?'Call '+need:'Check'}</button><button class="pill" data-a="raise" ${myTurn?'':'disabled'}>Raise</button>`}</div></div>`;
   say(P.done||P.msg+(myTurn?' Your move.':''));body.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{const a=b.dataset.a;if(a==='new')newTable();else if(a==='deal')newHand();else act(0,a);pokerUI()})}
+
+/* checkers: English draughts. You are dark and move up; captures are compulsory, jumps chain, kings on the far row */
+let K=null;
+function newCheckers(){const b=[];for(let r=0;r<8;r++){b.push([]);for(let c=0;c<8;c++)b[r].push((r+c)%2&&r<3?'w':(r+c)%2&&r>4?'b':'.')}K={b,turn:'b',sel:null,over:null,last:null,moves:0};LB.start('checkers')}
+const kOwn=(p,s)=>p!=='.'&&p.toLowerCase()===s,kKing=p=>p==='B'||p==='W';
+function kMoves(b,s){const caps=[],steps=[];const dirs=p=>kKing(p)?[[1,1],[1,-1],[-1,1],[-1,-1]]:s==='b'?[[-1,1],[-1,-1]]:[[1,1],[1,-1]];const inb=(r,c)=>r>=0&&r<8&&c>=0&&c<8;
+  const jump=(bb,r,c,p,path,taken)=>{let any=false;for(const [dr,dc] of dirs(p)){const mr=r+dr,mc=c+dc,tr=r+2*dr,tc=c+2*dc;if(!inb(tr,tc))continue;const m=bb[mr][mc];if(m==='.'||kOwn(m,s)||bb[tr][tc]!=='.')continue;if(taken.some(([a,q])=>a===mr&&q===mc))continue;
+      any=true;const nb=bb.map(x=>x.slice());nb[r][c]='.';nb[mr][mc]='.';const crowned=!kKing(p)&&(s==='b'?tr===0:tr===7);nb[tr][tc]=crowned?p.toUpperCase():p;if(crowned)caps.push({path:path.concat([[tr,tc]]),taken:taken.concat([[mr,mc]])});else jump(nb,tr,tc,p,path.concat([[tr,tc]]),taken.concat([[mr,mc]]))}
+    if(!any&&taken.length)caps.push({path,taken})};
+  for(let r=0;r<8;r++)for(let c=0;c<8;c++){const p=b[r][c];if(!kOwn(p,s))continue;jump(b,r,c,p,[[r,c]],[]);for(const [dr,dc] of dirs(p)){const tr=r+dr,tc=c+dc;if(inb(tr,tc)&&b[tr][tc]==='.')steps.push({path:[[r,c],[tr,tc]],taken:[]})}}
+  return caps.length?caps:steps}
+function kApply(b,m){const nb=b.map(x=>x.slice());const [r0,c0]=m.path[0],[r1,c1]=m.path[m.path.length-1];let p=nb[r0][c0];nb[r0][c0]='.';m.taken.forEach(([r,c])=>nb[r][c]='.');if(p==='b'&&r1===0)p='B';if(p==='w'&&r1===7)p='W';nb[r1][c1]=p;return nb}
+function kScore(b){let s=0;b.forEach(row=>row.forEach(p=>{if(p==='w')s+=1;if(p==='W')s+=1.7;if(p==='b')s-=1;if(p==='B')s-=1.7}));return s}
+function kAI(){const ms=kMoves(K.b,'w');if(!ms.length){K.over='No moves left for them. You win.';LB.win('checkers');return}let best=null,bs=-1e9;
+  ms.forEach(m=>{const nb=kApply(K.b,m);const rep=kMoves(nb,'b');let worst=1e9;if(!rep.length)worst=50;else rep.forEach(r=>{worst=Math.min(worst,kScore(kApply(nb,r)))});const sc=worst+Math.random()*.9;if(sc>bs){bs=sc;best=m}});
+  K.b=kApply(K.b,best);K.last=best.path;K.turn='b';K.moves++;const mine=kMoves(K.b,'b');if(!mine.length)K.over=K.b.some(r=>r.some(p=>kOwn(p,'b')))?'You are stuck. They win.':'They took them all. They win.'}
+function checkersUI(){if(!K)newCheckers();const ms=K.turn==='b'&&!K.over?kMoves(K.b,'b'):[];const sel=K.sel?ms.filter(m=>m.path[0][0]===K.sel[0]&&m.path[0][1]===K.sel[1]):[];
+  body.innerHTML=`<div class="g-chess"><div class="board ck" role="grid" aria-label="Checkers board"></div><div class="g-side"><p class="g-say"></p><button class="pill ghost" type="button" data-a="new">New game</button><p class="g-note">You play dark, moving up. Captures are compulsory and jumps chain. Reach the far row to crown a king.</p></div></div>`;
+  const bd=body.querySelector('.board');for(let r=0;r<8;r++)for(let c=0;c<8;c++){const sq=document.createElement('button');sq.type='button';sq.className='sq '+((r+c)%2?'d':'l');const p=K.b[r][c];if(p!=='.'){const i=document.createElement('i');i.className='man '+(p.toLowerCase()==='b'?'mb':'mw')+(kKing(p)?' king':'');sq.appendChild(i)}
+    if(K.sel&&K.sel[0]===r&&K.sel[1]===c)sq.classList.add('sel');if(sel.some(m=>{const e=m.path[m.path.length-1];return e[0]===r&&e[1]===c}))sq.classList.add('to');if(K.last&&K.last.some(([a,q])=>a===r&&q===c))sq.classList.add('last');
+    sq.onclick=()=>{if(K.over||K.turn!=='b')return;const m=sel.find(m=>{const e=m.path[m.path.length-1];return e[0]===r&&e[1]===c});if(m){K.b=kApply(K.b,m);K.last=m.path;K.sel=null;K.turn='w';K.moves++;checkersUI();setTimeout(()=>{kAI();checkersUI()},450);return}
+      if(kOwn(p,'b')&&ms.some(m=>m.path[0][0]===r&&m.path[0][1]===c))K.sel=[r,c];else if(kOwn(p,'b'))say('A capture is waiting somewhere. You have to take it.');checkersUI()};bd.appendChild(sq)}
+  say(K.over||(K.turn==='b'?(ms[0]&&ms[0].taken.length?'You have a capture. Take it.':'Your move.'):'Thinking...'));body.querySelector('[data-a]').onclick=()=>{newCheckers();checkersUI()};LB.decorate('checkers')}
+
+/* leaderboard: wins only. Global through /api/leaderboard; on this device if that is not reachable */
+const LB={t:{},pend:{},name:(()=>{try{return localStorage.getItem('lb-name')||''}catch(e){return''}})(),api:'/api/leaderboard',online:null,
+  async start(g){try{const r=await fetch(this.api,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({op:'start',game:g})});if(!r.ok)throw 0;const j=await r.json();this.t[g]=j.ticket;this.online=true}catch(e){this.online=false}},
+  win(g){this.pend[g]=true},
+  local(g){try{return JSON.parse(localStorage.getItem('lb-local-'+g)||'{}')}catch(e){return{}}},
+  async submit(g,name){name=String(name).trim().slice(0,16);if(name.length<2)return'Two letters at least.';try{localStorage.setItem('lb-name',name)}catch(e){}this.name=name;this.pend[g]=false;
+    if(this.t[g]){try{const r=await fetch(this.api,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({op:'win',game:g,name,ticket:this.t[g]})});const j=await r.json();this.t[g]=null;if(r.ok)return`On the board: ${j.name}, ${j.wins} ${j.wins===1?'win':'wins'}, number ${j.rank}.`;if(j.error==='too fast')return'That was too quick to count. Play a full game.';}catch(e){}}
+    const L=this.local(g);L[name]=(L[name]||0)+1;try{localStorage.setItem('lb-local-'+g,JSON.stringify(L))}catch(e){}return`Saved on this device: ${name}, ${L[name]} ${L[name]===1?'win':'wins'}.`},
+  async top(g){try{const r=await fetch(this.api+'?game='+g);if(!r.ok)throw 0;const j=await r.json();this.online=true;return{top:j.top,global:true}}catch(e){const L=this.local(g);return{top:Object.entries(L).map(([name,wins])=>({name,wins})).sort((a,b)=>b.wins-a.wins).slice(0,20),global:false}}},
+  decorate(g){if(!this.pend[g])return;const side=body.querySelector('.g-side');if(!side)return;const f=document.createElement('form');f.className='lb-form';f.innerHTML=`<p class="g-say">You won. Put your name on the board.</p><input class="w-in" maxlength="16" required placeholder="Your name" value="${(this.name||'').replace(/"/g,'')}"><button class="pill" type="submit">Add my win</button><p class="g-note lb-msg"></p>`;
+    f.onsubmit=async e=>{e.preventDefault();const m=await this.submit(g,f.querySelector('input').value);f.querySelector('.lb-msg').textContent=m;f.querySelector('button').disabled=true;f.querySelector('input').disabled=true};side.prepend(f)}};
+async function boardUI(){body.innerHTML=`<div class="lb"><div class="lb-cols">${['chess','checkers','poker'].map(g=>`<div class="lb-col"><p class="w-who">${g==='poker'?"Hold'em":g[0].toUpperCase()+g.slice(1)}</p><ol data-lb="${g}"><li class="g-note">Loading</li></ol></div>`).join('')}</div><p class="g-note lb-where"></p></div>`;
+  let global=true;for(const g of ['chess','checkers','poker']){const {top,global:gl}=await LB.top(g);global=global&&gl;const ol=body.querySelector(`[data-lb="${g}"]`);if(!ol)return;ol.innerHTML=top.length?top.map(t=>`<li><span>${String(t.name).replace(/[<>&]/g,'')}</span><b>${t.wins}</b></li>`).join(''):'<li class="g-note">No wins yet. Be the first.</li>'}
+  const w=body.querySelector('.lb-where');if(w)w.textContent=global?'Global board. Only wins count, one per finished game.':'The global board is not reachable here, so these are wins saved on this device.'}
 return{open}})();
 
 /* ---------- loop ---------- */
