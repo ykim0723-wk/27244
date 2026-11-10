@@ -992,20 +992,41 @@ function drawPlaid(x,W,H,s){
     if(s._st!==s.style){Object.assign(s,P);s._st=s.style;setTimeout(()=>{const pn=$('#paneGen'),t=pn.scrollTop;renderGen();pn.scrollTop=t},0)}
     else if(PLAID_KEYS.some(k=>s[k]!==P[k])){s.style='Custom';s._st='Custom';document.querySelectorAll('#paneGen .chip').forEach(b=>{if(PLAID_NAMES.includes(b.textContent))b.setAttribute('aria-pressed',String(b.textContent==='Custom'))})}}
   else s._st='Custom';
-  const pal={A:hex(s.ca),B:hex(s.cb),C:hex(s.cc),D:hex(s.cd),E:hex(s.ce),F:hex(s.cf)},unit=Math.max(.5,s.scale*Math.min(W,H)/1200);
-  const parse=t=>{const o=[];String(t||'').replace(/([A-Fa-f])\s*(\d+(?:\.\d+)?)/g,(m,l,n)=>{o.push([l.toUpperCase(),Math.max(.5,+n)]);return m});return o.length?o:[['A',8],['B',8]]};
+  const pal={A:hex(s.ca),B:hex(s.cb),C:hex(s.cc),D:hex(s.cd),E:hex(s.ce),F:hex(s.cf)},want=Math.max(.5,s.scale*Math.min(W,H)/1200),mode=s.weave;
+  const parse=t=>{const o=[];String(t||'').replace(/([A-Fa-f])\s*(\d+(?:\.\d+)?)/g,(m,l,n)=>{o.push([l.toUpperCase(),Math.max(1,Math.round(+n))]);return m});return o.length?o:[['A',8],['B',8]]};
   const build=t=>{let q=parse(t);if(s.sym.startsWith('mirror')&&q.length>2)q=q.concat(q.slice(1,-1).reverse());
-    const tot=q.reduce((a,b)=>a+b[1],0),n=Math.max(1,Math.round(tot*unit)),col=new Uint8Array(n*3);let pi=0,acc=q[0][1]*unit;
-    for(let p=0;p<n;p++){while(p+.5>acc&&pi<q.length-1){pi++;acc+=q[pi][1]*unit}const c=pal[q[pi][0]];col[p*3]=c[0];col[p*3+1]=c[1];col[p*3+2]=c[2]}return{n,col}};
+    const T=q.reduce((a,b)=>a+b[1],0),col=new Uint8Array(T*3);let i=0;for(const[l,n]of q){const c=pal[l];for(let k=0;k<n;k++,i++){col[i*3]=c[0];col[i*3+1]=c[1];col[i*3+2]=c[2]}}return{T,col}};
   const WA=build(s.sett),WE=s.hsame==='own sequence'?build(s.sett2):WA;
-  const a=s.ang*Math.PI/180,ca=Math.cos(a),sa=Math.sin(a),cx=W/2,cy=H/2,o=s.op/100,tex=s.tex/100,mode=s.weave,img=x.createImageData(W,H),p=img.data;
-  for(let y=0;y<H;y++)for(let X=0;X<W;X++){const dx=X-cx,dy=y-cy,u=dx*ca+dy*sa,v=-dx*sa+dy*ca,iu=(((Math.floor(u)%WA.n)+WA.n)%WA.n)*3,iv=(((Math.floor(v)%WE.n)+WE.n)%WE.n)*3;
+  // Seamless repeat: whole sett repeats (and whole 2- or 4-thread weave cycles) fit the canvas exactly, so the edges meet when tiled.
+  const per=mode==='twill'?4:mode==='plain'?2:1;
+  const fit=(len,T)=>{const k0=Math.max(1,Math.round(len/(T*want)));for(let d=0;d<=per;d++){for(const k of[k0+d,k0-d])if(k>=1&&(k*T)%per===0)return len/(k*T)}return len/(k0*T)};
+  const swap=Math.abs(s.ang)===90;
+  const ux=swap?fit(H,WA.T):fit(W,WA.T),uy=swap?fit(W,WE.T):fit(H,WE.T);
+  const a=s.ang*Math.PI/180,ca=Math.cos(a),sa=Math.sin(a),rot=Math.abs(s.ang)%180!==0,cx=W/2,cy=H/2,o=s.op/100,tex=s.tex/100,img=x.createImageData(W,H),p=img.data;
+  for(let y=0;y<H;y++)for(let X=0;X<W;X++){let u,v;
+    if(!rot){u=X;v=y}else if(swap){u=y;v=X}else{const dx=X-cx,dy=y-cy;u=dx*ca+dy*sa;v=-dx*sa+dy*ca}
+    const fu=u/ux,fv=v/uy,tu=Math.floor(fu),tv=Math.floor(fv),iu=(((tu%WA.T)+WA.T)%WA.T)*3,iv=(((tv%WE.T)+WE.T)%WE.T)*3;
     let r,g,b,sh=1;
     if(mode==='quick overlay'){r=WA.col[iu]*(1-o)+WE.col[iv]*o;g=WA.col[iu+1]*(1-o)+WE.col[iv+1]*o;b=WA.col[iu+2]*(1-o)+WE.col[iv+2]*o}
-    else{const fu=u/unit,fv=v/unit,tu=Math.floor(fu),tv=Math.floor(fv),warp=mode==='plain'?((tu+tv)&1)===0:(((tu+tv)%4)+4)%4<2,C_=warp?WA.col:WE.col,j=warp?iu:iv,f=warp?fu-tu:fv-tv,e=2*Math.abs(f-.5);
+    else{const warp=mode==='plain'?((tu+tv)&1)===0:(((tu+tv)%4)+4)%4<2,C_=warp?WA.col:WE.col,j=warp?iu:iv,f=warp?fu-tu:fv-tv,e=2*Math.abs(f-.5);
       r=C_[j];g=C_[j+1];b=C_[j+2];sh=1-tex*.3*e*e}
     const nz=(hash(X,y,s.seed)-.5)*tex*36,i=(y*W+X)*4;p[i]=r*sh+nz;p[i+1]=g*sh+nz;p[i+2]=b*sh+nz;p[i+3]=255}
-  x.putImageData(img,0,0)}
+  x.putImageData(img,0,0);
+  if(s.pl&&s.pl!=='none')plaidLogos(x,W,H,s,swap?WE.T*uy:WA.T*ux,swap?WA.T*ux:WE.T*uy)}
+function plaidLogos(x,W,H,s,repW,repH){
+  // Logos sit on a grid that divides one sett repeat exactly, so the tile still wraps seamlessly.
+  const n=s.pln,cw=repW/n,ch=repH/n,cols=Math.round(W/cw),rows=Math.round(H/ch),sz=Math.min(cw,ch)*s.pls/100,
+    tint=s.plc==='original'?null:s[{A:'ca',B:'cb',C:'cc',D:'cd',E:'ce',F:'cf'}[s.plc.slice(-1)]],
+    shapes=['star','diamond','flower','cross','dot'],shape=shapes.includes(s.pl),all=s.pl==='all my logos';
+  const pts=[];for(let j=-1;j<=rows;j++)for(let i=-1;i<=cols;i++){pts.push([i,j,(i+s.plx/100)*cw,(j+s.ply/100)*ch]);if(s.pllay==='diamond')pts.push([i,j,(i+s.plx/100+.5)*cw,(j+s.ply/100+.5)*ch,1])}
+  x.save();x.globalAlpha=s.plo/100;
+  pts.forEach(([i,j,px,py,alt])=>{if(px<-sz||py<-sz||px>W+sz||py>H+sz)return;x.save();x.translate(px,py);x.rotate(s.plr*Math.PI/180);
+    if(shape){x.fillStyle=x.strokeStyle=tint||'#ffffff';bShape(x,s.pl==='cross'?'cross':s.pl,sz/2,{trans:'transparent',bg:'#000'})}
+    else{const idx=all?(((i+j+(alt?1:0))%Math.max(1,monoLogos.length))+monoLogos.length)%Math.max(1,monoLogos.length):(+s.pl.slice(-1))-1,L=monoLogos[idx];
+      if(L){const c=logoCanvas(L,s.plbg,tint),sc=sz/Math.max(c.width,c.height);x.drawImage(c,-c.width*sc/2,-c.height*sc/2,c.width*sc,c.height*sc)}
+      else{x.strokeStyle=x.fillStyle='rgba(255,255,255,.8)';x.lineWidth=Math.max(1,sz*.04);x.setLineDash([sz*.1,sz*.08]);x.strokeRect(-sz/2,-sz/2,sz,sz);x.setLineDash([]);x.font=`700 ${sz*.36}px "Red Hat Mono",monospace`;x.textAlign='center';x.textBaseline='middle';x.fillText(all?'+':(idx+1),0,0)}}
+    x.restore()});
+  x.restore()}
 const GEN=[
 {id:'blobs',name:'Blobs',desc:'Merging organic shapes. Pairs well with Spikes.',params:[R('n','shapes',1,30,7),R('size','size',5,60,22),R('stretch','stretch',0,100,25),...COMMON],
  draw(x,W,H,s,r){const m=Math.min(W,H),b=[];for(let i=0;i<s.n;i++)b.push([W*(.15+r()*.7),H*(.15+r()*.7),m*s.size/100*(.4+r()*.8),1+(r()-.5)*s.stretch/50]);
@@ -1080,11 +1101,12 @@ const GEN=[
   x.restore();x.globalAlpha=1}},
 {id:'builder',name:'Pattern builder',desc:'Place your logos and shapes in one tile, then repeat it. Drag to arrange.',params:[R('cols','tiles across',1,20,4),R('ratio','tile height %',30,300,100),S('layout','repeat',['grid','brick','half-drop']),R('off','offset %',0,100,50),R('gscale','scale everything %',10,300,100),R('ang','rotate pattern',-90,90,0),S('lbg','logo background',['keep','remove white','remove black']),C('bg','background','#ffffff'),S('trans','background',['solid','transparent'])],
  draw(x,W,H,s){drawBuilder(x,W,H,s,{cols:s.cols,ang:s.ang,cx:W/2,cy:H/2})}},
-{id:'plaid',name:'Plaid / tartan',desc:'Woven checks from your own stripe sequence: flannel, tartan, gingham.',params:[S('style','plaid',PLAID_NAMES),
+{id:'plaid',name:'Plaid / tartan',desc:'Woven checks from your own stripe sequence, with optional repeating logos. Tiles seamlessly.',params:[S('style','plaid',PLAID_NAMES),
  Object.assign(T('sett','stripes · letter + width','A18 C3 A6 B1 A6 C3 A18 D10 B2 D10'),{hint:'A–F = the colors below'}),S('sym','repeat',['mirror (tartan)','straight']),
  S('hsame','horizontal stripes',['same as vertical','own sequence']),Object.assign(T('sett2','horizontal stripes (own sequence)','A16 C4 A4 B2'),{hint:'Used when set to own sequence'}),
  C('ca','color A','#8a1a24'),C('cb','color B','#e9dcc0'),C('cc','color C','#17110f'),C('cd','color D','#5c0f19'),C('ce','color E','#b0464e'),C('cf','color F','#ffffff'),
- S('weave','weave',['twill','quick overlay','plain']),R('op','overlay opacity %',10,90,50),R('scale','thread size',1,24,5),R('ang','rotate',-90,90,0),R('tex','fabric texture',0,100,35),R('seed','seed',1,999,7)],
+ S('weave','weave',['twill','quick overlay','plain']),R('op','overlay opacity %',10,90,50),R('scale','thread size',1,24,5),R('ang','rotate',-90,90,0),R('tex','fabric texture',0,100,35),R('seed','seed',1,999,7),
+ S('pl','repeating logo',['none','logo 1','logo 2','logo 3','logo 4','all my logos','star','diamond','flower','cross','dot']),S('pllay','logo layout',['grid','diamond']),R('pln','logos per repeat',1,4,1),R('pls','logo size %',4,100,28),R('plx','shift across %',0,100,50),R('ply','shift down %',0,100,50),R('plr','logo rotation',-180,180,0),S('plc','logo color',['original','color A','color B','color C','color D','color E','color F']),S('plbg','logo background',['remove white','remove black','keep']),R('plo','logo opacity %',10,100,100)],
  draw:drawPlaid},
 {id:'shards',name:'Shards',desc:'Sharp broken-glass triangles.',params:[R('n','shards',3,200,40),R('size','size',5,80,25),R('sharp','sharpness',0,100,70),...COMMON],
  draw(x,W,H,s,r){const k=Math.min(W,H);x.fillStyle=s.ink;for(let i=0;i<s.n;i++){const cx=r()*W,cy=r()*H,L=k*s.size/100*(.3+r()),a=r()*Math.PI*2,wd=L*(1-s.sharp/100*.85)*.35;
@@ -1099,7 +1121,7 @@ function addLogos(files){const list=[...files].filter(f=>f.type.startsWith('imag
   list.forEach(f=>{const u=URL.createObjectURL(f),im=new Image();im.onload=()=>{const max=700,w=im.naturalWidth||300,h=im.naturalHeight||300,sc=Math.min(1,max/Math.max(w,h)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(w*sc));c.height=Math.max(1,Math.round(h*sc));
     c.getContext('2d').drawImage(im,0,0,c.width,c.height);monoLogos.push({c,name:f.name,cache:{}});URL.revokeObjectURL(u);done()};im.onerror=()=>{URL.revokeObjectURL(u);snack(`Couldn’t read ${f.name}.`);done()};im.src=u});
   function done(){if(--left)return;if(genSel!=='builder'){const st=gstate.monogram;if(st.luse==='off')st.luse='letters';genSel='monogram'}renderGen();drawGen();snack(`${monoLogos.length} logo${monoLogos.length===1?'':'s'} in your pattern`)}}
-function logoBlock(){const w=document.createElement('div');w.className='ctl';w.innerHTML=`<div class="ctl-top"><span>My logos</span><small>${monoLogos.length?monoLogos.length+' added · numbered for Pattern builder':'Use them in Monogram or Pattern builder'}</small></div>
+function logoBlock(){const w=document.createElement('div');w.className='ctl';w.innerHTML=`<div class="ctl-top"><span>My logos</span><small>${monoLogos.length?monoLogos.length+' added · numbered for Pattern builder':'Use them in Monogram, Pattern builder or Plaid'}</small></div>
   <div class="logos"></div><div class="actions" style="justify-content:flex-start"><label class="btn filled" for="logoIn">${ICON.plus}Upload logos<input id="logoIn" type="file" accept="image/*" multiple hidden></label>${monoLogos.length?'<button class="link" type="button" id="logoClr">Remove all</button>':''}</div>`;
   const box=w.querySelector('.logos');monoLogos.forEach((L,i)=>{const t=document.createElement('div');t.className='logo-th';t.style.backgroundImage=`url(${L.c.toDataURL('image/png')})`;t.title=L.name;t.innerHTML=`<span class="logo-n">${i+1}</span>`;
     const b=document.createElement('button');b.type='button';b.setAttribute('aria-label','Remove '+L.name);b.innerHTML=ICON.close;b.onclick=()=>{monoLogos.splice(i,1);renderGen();if(genActive)drawGen()};t.appendChild(b);box.appendChild(t)});
