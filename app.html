@@ -202,6 +202,11 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;bac
 /* snack + dialogs */
 .snack{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);border-radius:var(--r-md);padding:10px 8px 10px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 20px 50px rgba(0,0,0,.2);z-index:60;max-width:calc(100% - 32px);font-weight:600;font-size:13px}
 .snack button{border:0;background:none;color:var(--accent);font-weight:700;padding:6px 8px}
+.bgpop{position:fixed;top:72px;right:max(16px,env(safe-area-inset-right,0px));z-index:60;width:min(340px,calc(100vw - 32px));background:var(--surface,#fff);border-radius:var(--r-md,16px);padding:14px;box-shadow:0 0 0 1px var(--line-2,rgba(0,0,0,.12)),0 24px 60px rgba(0,0,0,.16);display:flex;flex-direction:column;gap:10px}
+.bgpop[hidden]{display:none}.bgpop-h{display:flex;align-items:center;justify-content:space-between}.bgseg{display:flex;gap:4px}.bgseg button{flex:1;height:34px;border:0;border-radius:999px;font:inherit;font-size:12.5px;font-weight:600;background:var(--surface-2,#f1f1ee);color:var(--ink);cursor:pointer}.bgseg button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+.bgline{display:flex;align-items:center;gap:10px;font-size:12.5px}.bgline>span{width:86px;flex:none;color:var(--mute,#666)}.bgline input[type=range]{flex:1;accent-color:var(--ink)}.bgline select{flex:1;height:32px;border-radius:10px;border:0;box-shadow:inset 0 0 0 1px var(--line-2);background:transparent;font:inherit}
+.bgsw{width:22px;height:22px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.2);background:repeating-conic-gradient(#ddd 0 25%,#fff 0 50%) 0 0/8px 8px}.bgnote{margin:0;font-size:12px;color:var(--mute,#666);line-height:1.45}.bgacts{display:flex;gap:6px}.bgacts .btn{flex:1;justify-content:center}
+.stage canvas#view{background:repeating-conic-gradient(#e7e7e3 0 25%,#f7f7f5 0 50%) 0 0/18px 18px}
 .modal{position:fixed;inset:0;background:rgba(236,236,233,.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:grid;place-items:center;z-index:70;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
 .dialog{background:var(--surface);border:1px solid var(--line-2);border-radius:18px;padding:22px;max-width:min(580px,100%);width:100%;display:flex;flex-direction:column;gap:14px;box-shadow:0 40px 120px rgba(0,0,0,.18)}
 .dialog h3{margin:0;font:800 28px/1 var(--display);font-stretch:115%}
@@ -298,6 +303,7 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;bac
     <button class="icon-btn" id="undo" title="Undo (Ctrl+Z)" aria-label="Undo"><svg class="i" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button>
     <button class="icon-btn" id="redo" title="Redo (Ctrl+Shift+Z)" aria-label="Redo"><svg class="i" viewBox="0 0 24 24"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg></button>
     <span class="sep"></span>
+    <button class="btn tonal" id="bgBtn" title="Remove background"><svg class="i" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.6 7.6 20 18M8.6 16.4 20 6"/></svg><span class="lbl">Remove BG</span></button>
     <label class="btn tonal" for="file" title="Import (I)"><svg class="i" viewBox="0 0 24 24"><path d="M12 15V3m0 0L7 8m5-5 5 5"/><path d="M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg><span class="lbl">Import</span><input id="file" type="file" accept="image/*,video/*,audio/*" hidden></label>
     <button class="btn filled" id="export" title="Export (E)"><svg class="i" viewBox="0 0 24 24"><path d="M12 3v12m0 0-5-5m5 5 5-5"/><path d="M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg><span class="lbl">Export</span></button>
   </header>
@@ -352,6 +358,18 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;bac
 </div>
 <div class="snack" id="snack" role="status" hidden><span id="snackMsg"></span><button id="snackAct" hidden></button></div>
 
+<div class="bgpop" id="bgPop" hidden role="dialog" aria-label="Remove background">
+  <div class="bgpop-h"><b>Remove background</b><button class="icon-btn" id="bgClose" aria-label="Close"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+  <div class="bgseg"><button type="button" data-bgm="ai" aria-pressed="true">Cut out subject</button><button type="button" data-bgm="key" aria-pressed="false">Color key</button></div>
+  <div id="bgAiRow"><p class="bgnote">Runs on your device. The first run downloads a 44 MB model.</p></div>
+  <div id="bgKeyRow" hidden><div class="bgline"><span>Color</span><i id="bgSw" class="bgsw" title="Click the image to pick"></i><small>auto from the edges, or click the image</small></div>
+    <label class="bgline"><span>Tolerance</span><input type="range" id="bgTol" min="0" max="100" value="18"></label><label class="bgline"><span>Softness</span><input type="range" id="bgSoft" min="0" max="100" value="12"></label>
+    <label class="bgline"><input type="checkbox" id="bgFlood" checked><small>Only remove color touching the edges</small></label></div>
+  <label class="bgline"><span>Edge</span><input type="range" id="bgEdge" min="0" max="100" value="20"></label>
+  <label class="bgline"><span>Replace with</span><select id="bgFill"><option value="transparent">Transparent</option><option value="white">White</option><option value="black">Black</option><option value="color">Color</option></select><input type="color" id="bgFc" value="#e9e5dc" hidden></label>
+  <div class="bgacts"><button class="btn filled" id="bgGo" type="button">Remove it</button><button class="btn tonal" id="bgRestore" type="button">Restore original</button></div>
+  <p class="bgnote" id="bgStat" role="status">Finds the subject: people, products, logos, animals.</p>
+</div>
 <div class="modal" id="exportModal" hidden>
   <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="expTitle">
     <h3 id="expTitle">Your image is ready</h3>
@@ -854,8 +872,39 @@ function setMeta(name){$('#fname').textContent=name;$('#fmeta').textContent=`${s
 function load(img,name){const max=1600,w=img.naturalWidth||img.width,h=img.naturalHeight||img.height,s=Math.min(1,max/Math.max(w,h));
   src.width=Math.round(w*s);src.height=Math.round(h*s);sctx.clearRect(0,0,src.width,src.height);sctx.drawImage(img,0,0,src.width,src.height);userImage=true;genActive=false;letActive=false;if(typeof renderGen==='function')renderGen();setMeta(name||'Pasted image');$('#emptyStage').hidden=true;$('#stageWrap').classList.remove('nofile');$('#view').hidden=false;$('#export').disabled=false;
   schedule();buildThumbs();snack(s<1?`Opened ${name||'image'} · scaled to ${src.width}×${src.height} for speed`:`Opened ${name||'image'}`)}
-function loadFile(f){if(f&&window.mReady&&/^(video|audio)\//.test(f.type))return f.type[0]==='v'?mLoadVideo(f):mLoadAudio(f);if(!f||!f.type.startsWith('image/'))return snack('That file isn’t an image. Try a JPG, PNG or WebP.');const u=URL.createObjectURL(f),i=new Image();
+function loadFile(f){BGX.stale=true;if(f&&window.mReady&&/^(video|audio)\//.test(f.type))return f.type[0]==='v'?mLoadVideo(f):mLoadAudio(f);if(!f||!f.type.startsWith('image/'))return snack('That file isn’t an image. Try a JPG, PNG or WebP.');const u=URL.createObjectURL(f),i=new Image();
   i.onload=()=>{load(i,f.name);URL.revokeObjectURL(u)};i.onerror=()=>snack('Couldn’t open that image. Try exporting it as JPG or PNG first.');i.src=u}
+// ---------- background removal: an on-device cut-out model, or a color key for flat backgrounds ----------
+const BGX={orig:null,mask:null,pipe:null,mode:'ai',key:null,busy:false};
+function bgStatus(t){$('#bgStat').textContent=t}
+function bgOpen(){if(!userImage)return snack('Import an image first.');const p=$('#bgPop');p.hidden=!p.hidden;if(p.hidden)return;if(!BGX.orig||BGX.stale){BGX.orig=document.createElement('canvas');BGX.orig.width=src.width;BGX.orig.height=src.height;BGX.orig.getContext('2d').drawImage(src,0,0);BGX.mask=null;BGX.key=null;BGX.stale=false}bgSync()}
+function bgSync(){document.querySelectorAll('#bgPop [data-bgm]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.bgm===BGX.mode)));$('#bgKeyRow').hidden=BGX.mode!=='key';$('#bgAiRow').hidden=BGX.mode!=='ai'}
+async function bgAI(){if(BGX.busy)return;BGX.busy=true;$('#bgGo').disabled=true;try{
+  if(!BGX.pipe){bgStatus('Loading the cut-out model. 44 MB, first time only, then it is cached.');const T=await import('https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.2');T.env.allowLocalModels=false;
+    BGX.pipe=await T.pipeline('image-segmentation','onnx-community/ormbg-ONNX',{dtype:'uint8',progress_callback:p=>{if(p.status==='progress'&&/onnx$/.test(p.file||''))bgStatus(`Downloading the model ${Math.round(p.progress||0)}%`)}})}
+  bgStatus('Cutting out on your device...');const out=await BGX.pipe(BGX.orig.toDataURL('image/png'));const m=(Array.isArray(out)?out[0]:out).mask;
+  const mc=document.createElement('canvas');mc.width=m.width;mc.height=m.height;const md=mc.getContext('2d').createImageData(m.width,m.height),ch=m.channels||1;for(let i=0;i<m.width*m.height;i++){const v=m.data[i*ch];md.data[i*4]=md.data[i*4+1]=md.data[i*4+2]=v;md.data[i*4+3]=255}mc.getContext('2d').putImageData(md,0,0);
+  const W=BGX.orig.width,H=BGX.orig.height,sc=document.createElement('canvas');sc.width=W;sc.height=H;const sx=sc.getContext('2d');sx.imageSmoothingQuality='high';sx.drawImage(mc,0,0,W,H);const d=sx.getImageData(0,0,W,H).data,a=new Uint8ClampedArray(W*H);for(let i=0;i<W*H;i++)a[i]=d[i*4];
+  BGX.mask=a;bgApply();bgStatus('Done. Adjust the edge, or restore the original.')}catch(e){console.error(e);bgStatus('The model could not load here. Try the color key, or check your connection.')}BGX.busy=false;$('#bgGo').disabled=false}
+function bgKey(){const W=BGX.orig.width,H=BGX.orig.height,d=BGX.orig.getContext('2d').getImageData(0,0,W,H).data;let key=BGX.key;
+  if(!key){const bins=new Map(),add=i=>{const k=(d[i]>>4)<<8|(d[i+1]>>4)<<4|(d[i+2]>>4),o=bins.get(k)||[0,0,0,0];o[0]+=d[i];o[1]+=d[i+1];o[2]+=d[i+2];o[3]++;bins.set(k,o)};for(let x=0;x<W;x+=2){add(x*4);add(((H-1)*W+x)*4)}for(let y=0;y<H;y+=2){add(y*W*4);add((y*W+W-1)*4)}let best=[0,0,0,1];bins.forEach(o=>{if(o[3]>best[3])best=o});key=[best[0]/best[3],best[1]/best[3],best[2]/best[3]];$('#bgSw').style.background=`rgb(${key.map(Math.round)})`}
+  const tol=+$('#bgTol').value*2.2,soft=Math.max(1,+$('#bgSoft').value*2.2),dist=i=>Math.hypot(d[i]-key[0],d[i+1]-key[1],d[i+2]-key[2]),a=new Uint8ClampedArray(W*H).fill(255);
+  if($('#bgFlood').checked){const seen=new Uint8Array(W*H),st=[];const push=p=>{if(!seen[p]){seen[p]=1;st.push(p)}};for(let x=0;x<W;x++){push(x);push((H-1)*W+x)}for(let y=0;y<H;y++){push(y*W);push(y*W+W-1)}
+    while(st.length){const p=st.pop(),e=dist(p*4);if(e>=tol+soft)continue;a[p]=e<=tol?0:Math.round((e-tol)/soft*255);const x=p%W,y=(p/W)|0;if(x>0)push(p-1);if(x<W-1)push(p+1);if(y>0)push(p-W);if(y<H-1)push(p+W)}}
+  else for(let p=0;p<W*H;p++){const e=dist(p*4);a[p]=e<=tol?0:e>=tol+soft?255:Math.round((e-tol)/soft*255)}
+  BGX.mask=a;bgApply()}
+function bgApply(){if(!BGX.mask)return;const W=BGX.orig.width,H=BGX.orig.height,img=BGX.orig.getContext('2d').getImageData(0,0,W,H),p=img.data,a=BGX.mask,lo=+$('#bgEdge').value/100*.45,hi=1-lo,fill=$('#bgFill').value,fc=fill==='color'?hex($('#bgFc').value):fill==='white'?[255,255,255]:[0,0,0];
+  for(let i=0;i<W*H;i++){let v=a[i]/255;v=Math.max(0,Math.min(1,(v-lo)/Math.max(.01,hi-lo)));if(BGX.mode==='ai')v=v*v*(3-2*v);
+    if(fill==='transparent')p[i*4+3]=Math.round(p[i*4+3]*v);else for(let c=0;c<3;c++)p[i*4+c]=Math.round(p[i*4+c]*v+fc[c]*(1-v))}
+  src.width=W;src.height=H;sctx.clearRect(0,0,W,H);sctx.putImageData(img,0,0);genActive=false;letActive=false;setMeta(($('#fname').textContent.replace(/ · no background$/,''))+' · no background');schedule();clearTimeout(bgApply.t);bgApply.t=setTimeout(buildThumbs,500)}
+function bgRestore(){if(!BGX.orig)return;src.width=BGX.orig.width;src.height=BGX.orig.height;sctx.clearRect(0,0,src.width,src.height);sctx.drawImage(BGX.orig,0,0);BGX.mask=null;setMeta($('#fname').textContent.replace(/ · no background$/,''));schedule();bgStatus('Original restored.')}
+$('#bgBtn').onclick=bgOpen;$('#bgClose').onclick=()=>$('#bgPop').hidden=true;$('#bgRestore').onclick=bgRestore;
+document.querySelectorAll('#bgPop [data-bgm]').forEach(b=>b.onclick=()=>{BGX.mode=b.dataset.bgm;bgSync();bgStatus(BGX.mode==='ai'?'Finds the subject: people, products, logos, animals.':'Best for flat backgrounds. Click the image to pick the color to remove.')});
+$('#bgGo').onclick=()=>BGX.mode==='ai'?bgAI():bgKey();
+['bgTol','bgSoft','bgFlood'].forEach(id=>$('#'+id).addEventListener('input',()=>{if(BGX.mode==='key'&&BGX.orig)bgKey()}));['bgEdge','bgFill','bgFc'].forEach(id=>$('#'+id).addEventListener('input',()=>{$('#bgFc').hidden=$('#bgFill').value!=='color';bgApply()}));
+$('#view').addEventListener('click',e=>{if($('#bgPop').hidden||BGX.mode!=='key'||!BGX.orig)return;const b=e.currentTarget.getBoundingClientRect(),k=Math.min(b.width/BGX.orig.width,b.height/BGX.orig.height),ox=b.left+(b.width-BGX.orig.width*k)/2,oy=b.top+(b.height-BGX.orig.height*k)/2;
+  const x=Math.floor((e.clientX-ox)/k),y=Math.floor((e.clientY-oy)/k);if(x<0||y<0||x>=BGX.orig.width||y>=BGX.orig.height)return;const d=BGX.orig.getContext('2d').getImageData(x,y,1,1).data;BGX.key=[d[0],d[1],d[2]];$('#bgSw').style.background=`rgb(${d[0]},${d[1]},${d[2]})`;bgKey()});
+
 
 // ---------- presets filmstrip ----------
 const films=$('#films');const thumbs={};
@@ -987,7 +1036,7 @@ const PLAIDS={
  'Flannel':{sett:'B18 A10 B3 D1 B3 A10 B18 C6 D2 C6',sym:'mirror (tartan)',ca:'#45563a',cb:'#262626',cc:'#8b3b2b',cd:'#cbb488',ce:'#5d6e8a',cf:'#e6e1d4'},
  'Gingham':{sett:'A10 B10',sym:'straight',ca:'#ffffff',cb:'#1f3b8a',cc:'#111111',cd:'#c8102e',ce:'#777777',cf:'#e9dcc0'}};
 const PLAID_NAMES=[...Object.keys(PLAIDS),'Custom'],PLAID_KEYS=['sett','sym','ca','cb','cc','cd','ce','cf'];
-function drawPlaid(x,W,H,s){
+function drawPlaid(x,W,H,s){let W0=W,H0=H;
   if(s.style!=='Custom'){const P=PLAIDS[s.style];
     if(s._st!==s.style){Object.assign(s,P);s._st=s.style;setTimeout(()=>{const pn=$('#paneGen'),t=pn.scrollTop;renderGen();pn.scrollTop=t},0)}
     else if(PLAID_KEYS.some(k=>s[k]!==P[k])){s.style='Custom';s._st='Custom';document.querySelectorAll('#paneGen .chip').forEach(b=>{if(PLAID_NAMES.includes(b.textContent))b.setAttribute('aria-pressed',String(b.textContent==='Custom'))})}}
@@ -1000,8 +1049,12 @@ function drawPlaid(x,W,H,s){
   // Seamless repeat: whole sett repeats (and whole 2- or 4-thread weave cycles) fit the canvas exactly, so the edges meet when tiled.
   const per=mode==='twill'?4:mode==='plain'?2:1;
   const fit=(len,T)=>{const k0=Math.max(1,Math.round(len/(T*want)));for(let d=0;d<=per;d++){for(const k of[k0+d,k0-d])if(k>=1&&(k*T)%per===0)return len/(k*T)}return len/(k0*T)};
-  const swap=Math.abs(s.ang)===90;
-  const ux=swap?fit(H,WA.T):fit(W,WA.T),uy=swap?fit(W,WE.T):fit(H,WE.T);
+  const swap=Math.abs(s.ang)===90,straight=Math.abs(s.ang)%90===0;let ux,uy;
+  if(straight){// every thread is a whole number of pixels and the canvas holds whole repeats, so every repeat is pixel-identical and the edges meet exactly
+    const gcd=(a,b)=>b?gcd(b,a%b):a,lcm=(a,b)=>a/gcd(a,b)*b,t=Math.max(1,Math.round(want)),pu=lcm(WA.T,per)*t,pv=lcm(WE.T,per)*t,pw=swap?pv:pu,ph=swap?pu:pv;
+    W=Math.max(pw,Math.round(W/pw)*pw);H=Math.max(ph,Math.round(H/ph)*ph);if(W>4800)W=pw*Math.max(1,Math.floor(4800/pw));if(H>4800)H=ph*Math.max(1,Math.floor(4800/ph));
+    if(W!==W0||H!==H0){x.canvas.width=W;x.canvas.height=H}ux=uy=t}
+  else{ux=swap?fit(H,WA.T):fit(W,WA.T);uy=swap?fit(W,WE.T):fit(H,WE.T)}
   const a=s.ang*Math.PI/180,ca=Math.cos(a),sa=Math.sin(a),rot=Math.abs(s.ang)%180!==0,cx=W/2,cy=H/2,o=s.op/100,tex=s.tex/100,img=x.createImageData(W,H),p=img.data;
   for(let y=0;y<H;y++)for(let X=0;X<W;X++){let u,v;
     if(!rot){u=X;v=y}else if(swap){u=y;v=X}else{const dx=X-cx,dy=y-cy;u=dx*ca+dy*sa;v=-dx*sa+dy*ca}
@@ -1010,7 +1063,7 @@ function drawPlaid(x,W,H,s){
     if(mode==='quick overlay'){r=WA.col[iu]*(1-o)+WE.col[iv]*o;g=WA.col[iu+1]*(1-o)+WE.col[iv+1]*o;b=WA.col[iu+2]*(1-o)+WE.col[iv+2]*o}
     else{const warp=mode==='plain'?((tu+tv)&1)===0:(((tu+tv)%4)+4)%4<2,C_=warp?WA.col:WE.col,j=warp?iu:iv,f=warp?fu-tu:fv-tv,e=2*Math.abs(f-.5);
       r=C_[j];g=C_[j+1];b=C_[j+2];sh=1-tex*.3*e*e}
-    const nz=(hash(X,y,s.seed)-.5)*tex*36,i=(y*W+X)*4;p[i]=r*sh+nz;p[i+1]=g*sh+nz;p[i+2]=b*sh+nz;p[i+3]=255}
+    const nz=(hash(straight?X%Math.round(WA.T*ux*(swap?0:1)||W):X,straight?y%Math.round(WE.T*uy*(swap?0:1)||H):y,s.seed)-.5)*tex*36,i=(y*W+X)*4;p[i]=r*sh+nz;p[i+1]=g*sh+nz;p[i+2]=b*sh+nz;p[i+3]=255}
   x.putImageData(img,0,0);
   if(s.pl&&s.pl!=='none')plaidLogos(x,W,H,s,swap?WE.T*uy:WA.T*ux,swap?WA.T*ux:WE.T*uy)}
 function plaidLogos(x,W,H,s,repW,repH){
@@ -1190,7 +1243,7 @@ function bPanel(){const s=gstate.builder,w=document.createElement('div');w.class
 const SIZES={'1:1':[1200,1200],'4:5':[1200,1500],'3:4':[1200,1600],'9:16':[1080,1920],'16:9':[1920,1080]};
 const gstate={};GEN.forEach(g=>{gstate[g.id]={};g.params.forEach(p=>gstate[g.id][p.k]=p.v)});
 let genSel='metal',genSize='1:1',genActive=false;
-function drawGen(){const g=GEN.find(v=>v.id===genSel),s=gstate[g.id],[W,H]=SIZES[genSize];src.width=W;src.height=H;sctx.save();sctx.clearRect(0,0,W,H);
+function drawGen(){if(typeof BGX!=='undefined')BGX.stale=true;const g=GEN.find(v=>v.id===genSel),s=gstate[g.id],[W,H]=SIZES[genSize];src.width=W;src.height=H;sctx.save();sctx.clearRect(0,0,W,H);
   if(s.trans!=='transparent'){sctx.fillStyle=s.bg;sctx.fillRect(0,0,W,H)}try{g.draw(sctx,W,H,s,rng(s.seed||7))}catch(e){console.error(e)}sctx.restore();
   genActive=true;letActive=false;userImage=true;setMeta(`Generated · ${g.name}`);if(g.id==='metal'&&drawGen.vary){drawGen.vary=false;metalVariation()}$('#emptyStage').hidden=true;$('#stageWrap').classList.remove('nofile');$('#view').hidden=false;$('#export').disabled=false;schedule();
   clearTimeout(drawGen.t);drawGen.t=setTimeout(buildThumbs,700)}
