@@ -153,6 +153,12 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 input[type=range]:active::-webkit-slider-thumb{transform:scale(1.2)}
 input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;background:#fff;border:3px solid var(--accent)}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
+.plpanel{display:flex;flex-direction:column;gap:14px;margin-bottom:6px}.plbar{display:flex;height:22px;border-radius:6px;overflow:hidden;box-shadow:inset 0 0 0 1px var(--line-2);margin-bottom:8px}.plbar i{min-width:2px}
+.plrows{display:flex;flex-direction:column;gap:4px;max-height:280px;overflow:auto;padding-right:2px}.plrow{display:grid;grid-template-columns:26px 1fr 26px 24px 24px 24px;align-items:center;gap:6px}.plrow output{font:600 11px var(--ui);text-align:right;color:var(--mute)}
+.plrow button{height:24px;border:0;border-radius:6px;background:var(--surface-2);color:var(--ink);font-size:12px;cursor:pointer;padding:0}.plrow input[type=range]{width:100%;accent-color:var(--ink)}
+.plsw{position:relative;display:block;width:26px;height:26px;border-radius:7px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.18);cursor:pointer}.plsw input{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer}.plsw.big{width:34px;height:34px;border-radius:50%}.plsw.ground{border-radius:8px}
+.plpal{display:flex;flex-wrap:wrap;gap:8px}
+
 .chip{height:28px;border-radius:7px;border:1px solid var(--line-2);background:transparent;padding:0 10px;font:600 11.5px var(--ui);color:var(--mute)}
 .chip:hover{color:var(--ink);border-color:var(--mute)}
 .chip[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--ink)}
@@ -1025,51 +1031,143 @@ document.addEventListener('keyup',e=>{if(e.code==='Space'&&comparing)showOrigina
 // ---------- generators (no base image needed) ----------
 const COMMON=[C('ink','ink','#0d0d0d'),C('bg','background','#d4d4d4'),S('trans','background',['solid','transparent']),R('seed','seed',1,999,7)];
 // ---------- plaid / tartan ----------
-// Stripe sequence (letter A-F + width in threads) is laid as warp (vertical) and weft (horizontal),
-// then interlaced: "quick overlay" = horizontal copy at partial opacity over vertical, twill/plain = real weave.
+// A stripe list (any colors, any widths) is laid as warp (vertical) and weft (horizontal) and woven.
+// Threads are whole pixels and the canvas holds whole repeats, so it always tiles exactly.
+const PS=(t,pal)=>t.trim().split(/\s+/).map(x=>({c:pal[x[0]],w:+x.slice(1)}));
 const PLAIDS={
- 'Burgundy':{sett:'A18 C3 A6 B1 A6 C3 A18 D10 B2 D10',sym:'mirror (tartan)',ca:'#8a1a24',cb:'#e9dcc0',cc:'#17110f',cd:'#5c0f19',ce:'#b0464e',cf:'#ffffff'},
- 'Grey shadow':{sett:'D16 E6 B10 C2 B10 E6 D16 A8 F1 A8',sym:'mirror (tartan)',ca:'#2a2a2d',cb:'#8f8e95',cc:'#cfced6',cd:'#121214',ce:'#5a5960',cf:'#efeef4'},
- 'Navy / green':{sett:'A10 C4 A4 C4 A10 C10 B14 E1 B14 C10',sym:'mirror (tartan)',ca:'#14254a',cb:'#123d28',cc:'#0c0c0e',cd:'#2a5ea8',ce:'#d9c35a',cf:'#ffffff'},
- 'Red / yellow':{sett:'A26 B4 A3 E1 A3 B4 A10 D12 C1 D12',sym:'mirror (tartan)',ca:'#b3141d',cb:'#0d0d0f',cc:'#f2c318',cd:'#1c3f80',ce:'#f5f5f5',cf:'#0f5a2e'},
- 'Buffalo check':{sett:'A20 B20',sym:'straight',ca:'#b3121b',cb:'#111111',cc:'#ffffff',cd:'#5c0f19',ce:'#777777',cf:'#e9dcc0'},
- 'Flannel':{sett:'B18 A10 B3 D1 B3 A10 B18 C6 D2 C6',sym:'mirror (tartan)',ca:'#45563a',cb:'#262626',cc:'#8b3b2b',cd:'#cbb488',ce:'#5d6e8a',cf:'#e6e1d4'},
- 'Gingham':{sett:'A10 B10',sym:'straight',ca:'#ffffff',cb:'#1f3b8a',cc:'#111111',cd:'#c8102e',ce:'#777777',cf:'#e9dcc0'}};
-const PLAID_NAMES=[...Object.keys(PLAIDS),'Custom'],PLAID_KEYS=['sett','sym','ca','cb','cc','cd','ce','cf'];
-function drawPlaid(x,W,H,s){let W0=W,H0=H;
-  if(s.style!=='Custom'){const P=PLAIDS[s.style];
-    if(s._st!==s.style){Object.assign(s,P);s._st=s.style;setTimeout(()=>{const pn=$('#paneGen'),t=pn.scrollTop;renderGen();pn.scrollTop=t},0)}
-    else if(PLAID_KEYS.some(k=>s[k]!==P[k])){s.style='Custom';s._st='Custom';document.querySelectorAll('#paneGen .chip').forEach(b=>{if(PLAID_NAMES.includes(b.textContent))b.setAttribute('aria-pressed',String(b.textContent==='Custom'))})}}
-  else s._st='Custom';
-  const pal={A:hex(s.ca),B:hex(s.cb),C:hex(s.cc),D:hex(s.cd),E:hex(s.ce),F:hex(s.cf)},want=Math.max(.5,s.scale*Math.min(W,H)/1200),mode=s.weave;
-  const parse=t=>{const o=[];String(t||'').replace(/([A-Fa-f])\s*(\d+(?:\.\d+)?)/g,(m,l,n)=>{o.push([l.toUpperCase(),Math.max(1,Math.round(+n))]);return m});return o.length?o:[['A',8],['B',8]]};
-  const build=t=>{let q=parse(t);if(s.sym.startsWith('mirror')&&q.length>2)q=q.concat(q.slice(1,-1).reverse());
-    const T=q.reduce((a,b)=>a+b[1],0),col=new Uint8Array(T*3);let i=0;for(const[l,n]of q){const c=pal[l];for(let k=0;k<n;k++,i++){col[i*3]=c[0];col[i*3+1]=c[1];col[i*3+2]=c[2]}}return{T,col}};
-  const WA=build(s.sett),WE=s.hsame==='own sequence'?build(s.sett2):WA;
-  // Seamless repeat: whole sett repeats (and whole 2- or 4-thread weave cycles) fit the canvas exactly, so the edges meet when tiled.
-  const per=mode==='twill'?4:mode==='plain'?2:1;
-  const fit=(len,T)=>{const k0=Math.max(1,Math.round(len/(T*want)));for(let d=0;d<=per;d++){for(const k of[k0+d,k0-d])if(k>=1&&(k*T)%per===0)return len/(k*T)}return len/(k0*T)};
-  const swap=Math.abs(s.ang)===90,straight=Math.abs(s.ang)%90===0;let ux,uy;
-  if(straight){// every thread is a whole number of pixels and the canvas holds whole repeats, so every repeat is pixel-identical and the edges meet exactly
-    const gcd=(a,b)=>b?gcd(b,a%b):a,lcm=(a,b)=>a/gcd(a,b)*b,t=Math.max(1,Math.round(want)),pu=lcm(WA.T,per)*t,pv=lcm(WE.T,per)*t,pw=swap?pv:pu,ph=swap?pu:pv;
+ 'Burgundy':{wp:PS('A18 C3 A6 B1 A6 C3 A18 D10 B2 D10',{A:'#8a1a24',B:'#e9dcc0',C:'#17110f',D:'#5c0f19'}),sym:'mirror (tartan)'},
+ 'Black watch':{wp:PS('A22 B4 A4 B4 A4 B22 C22 D2 C22 B22',{A:'#14254a',B:'#0c0c0e',C:'#123d28',D:'#0c0c0e'}),sym:'mirror (tartan)'},
+ 'Red tartan':{wp:PS('A26 B4 A3 E1 A3 B4 A10 D12 C1 D12',{A:'#b3141d',B:'#0d0d0f',C:'#f2c318',D:'#1c3f80',E:'#f5f5f5'}),sym:'mirror (tartan)'},
+ 'Grey shadow':{wp:PS('D16 E6 B10 C2 B10 E6 D16 A8 F1 A8',{A:'#2a2a2d',B:'#8f8e95',C:'#cfced6',D:'#121214',E:'#5a5960',F:'#efeef4'}),sym:'mirror (tartan)'},
+ 'Camel check':{wp:PS('A30 B3 A4 C2 A4 B3 A30 D1',{A:'#c8a97e',B:'#1a1a1a',C:'#f3efe6',D:'#a3242b'}),sym:'mirror (tartan)'},
+ 'Flannel':{wp:PS('B18 A10 B3 D1 B3 A10 B18 C6 D2 C6',{A:'#45563a',B:'#262626',C:'#8b3b2b',D:'#cbb488'}),sym:'mirror (tartan)',fuzz:35},
+ 'Buffalo check':{wp:PS('A20 B20',{A:'#b3121b',B:'#111111'}),sym:'straight',fuzz:25},
+ 'Gingham':{wp:PS('A8 B8',{A:'#ffffff',B:'#1f3b8a'}),sym:'straight',weave:'plain'},
+ 'Houndstooth':{wp:PS('A4 B4',{A:'#f1ece2',B:'#141414'}),sym:'straight',weave:'2/2 twill'},
+ 'Glen check':{wp:PS('A4 B4 A4 B4 A4 B4 A2 B2 A2 B2 A2 B2 A2 B2',{A:'#efece6',B:'#2a2a2c'}),sym:'straight',weave:'2/2 twill'},
+ 'Windowpane':{wp:PS('A40 B2',{A:'#3b4252',B:'#d9d4c7'}),sym:'straight',weave:'2/2 twill'},
+ 'Tattersall':{wp:PS('A12 B2 A12 C2',{A:'#efe9da',B:'#2f5b3e',C:'#8a2a2a'}),sym:'straight',weave:'plain'},
+ 'Madras':{wp:PS('A10 B4 C8 D2 E10 B4 F6 D3 A6 C4',{A:'#e25b45',B:'#f3d36b',C:'#3d6fb0',D:'#ffffff',E:'#5aa36b',F:'#e78fb3'}),sym:'straight',weave:'plain',hmode:'shifted colors'},
+ 'Pastel picnic':{wp:PS('A14 B14 C4 B14',{A:'#f6efe4',B:'#c9d9c2',C:'#e8b9b4'}),sym:'straight',weave:'plain'},
+ 'Navy ombre':{wp:PS('A20 B10 C6 D4 E2 D4 C6 B10',{A:'#0f1830',B:'#1c2b52',C:'#2e4475',D:'#4a6396',E:'#9fb3d6'}),sym:'mirror (tartan)'}};
+const PLAID_NAMES=Object.keys(PLAIDS);
+const PL_WEAVES=['2/2 twill','3/1 twill','plain','basket','herringbone','satin','quick overlay'];
+function plCopy(a){return a.map(o=>({c:o.c,w:o.w}))}
+function plInit(s){s.ground=s.ground||'#efe9dd';if(s.wp)return;const P=PLAIDS[s.style]||PLAIDS.Burgundy;s.wp=plCopy(P.wp);s.wf=plCopy(P.wp)}
+function plApplyPreset(s,name){const P=PLAIDS[name];if(!P)return;s.style=name;s.wp=plCopy(P.wp);s.wf=plCopy(P.wp);s.sym=P.sym;s.weave=P.weave||'2/2 twill';s.hmode=P.hmode||'same as vertical';if(P.fuzz!==undefined)s.fuzz=P.fuzz;else s.fuzz=0}
+function plWarpUp(tu,tv,m){const md=(a,n)=>((a%n)+n)%n;
+  if(m==='plain')return md(tu+tv,2)===0;if(m==='3/1 twill')return md(tu+tv,4)<3;if(m==='basket')return md(Math.floor(tu/2)+Math.floor(tv/2),2)===0;
+  if(m==='herringbone')return md(Math.floor(tu/8),2)?md(tu-tv,4)<2:md(tu+tv,4)<2;if(m==='satin')return md(tu*2+tv,5)===0;return md(tu+tv,4)<2}
+const PL_PER={plain:[2,2],'3/1 twill':[4,4],basket:[4,4],herringbone:[16,4],satin:[5,5],'quick overlay':[1,1],'2/2 twill':[4,4]};
+function plSeq(list,sym){let q=list.filter(o=>o.w>0);if(!q.length)q=[{c:'#888888',w:8}];if(sym.startsWith('mirror')&&q.length>2)q=q.concat(q.slice(1,-1).reverse());return q}
+function plBuild(q){const T=q.reduce((a,b)=>a+b.w,0),col=new Uint8Array(T*3);let i=0;for(const o of q){const c=hex(o.c);for(let k=0;k<o.w;k++,i++){col[i*3]=c[0];col[i*3+1]=c[1];col[i*3+2]=c[2]}}return{T,col}}
+function drawPlaid(x,W,H,s){plInit(s);let W0=W,H0=H;
+  const want=Math.max(.5,s.scale*Math.min(W,H)/1200),mode=s.weave,qa=plSeq(s.wp,s.sym);let qb;
+  if(s.hmode==='own sequence')qb=plSeq(s.wf,s.sym);else if(s.hmode==='shifted colors'){const cs=qa.map(o=>o.c),k=Math.max(1,Math.floor(cs.length/3));qb=qa.map((o,i)=>({c:cs[(i+k)%cs.length],w:o.w}))}else qb=qa;
+  const WA=plBuild(qa),WE=s.hmode==='vertical only'?{T:1,col:new Uint8Array(3)}:plBuild(qb),bg=hex(s.ground||'#ffffff');
+  const [pu0,pv0]=PL_PER[mode]||[4,4],swap=Math.abs(s.ang)===90,straight=Math.abs(s.ang)%90===0;let ux,uy;
+  const gcd=(a,b)=>b?gcd(b,a%b):a,lcm=(a,b)=>a/gcd(a,b)*b,t=Math.max(1,Math.round(want));
+  if(straight){const pu=lcm(WA.T,pu0)*t,pv=lcm(WE.T,pv0)*t,pw=swap?pv:pu,ph=swap?pu:pv;
     W=Math.max(pw,Math.round(W/pw)*pw);H=Math.max(ph,Math.round(H/ph)*ph);if(W>4800)W=pw*Math.max(1,Math.floor(4800/pw));if(H>4800)H=ph*Math.max(1,Math.floor(4800/ph));
-    if(W!==W0||H!==H0){x.canvas.width=W;x.canvas.height=H}ux=uy=t}
-  else{ux=swap?fit(H,WA.T):fit(W,WA.T);uy=swap?fit(W,WE.T):fit(H,WE.T)}
-  const a=s.ang*Math.PI/180,ca=Math.cos(a),sa=Math.sin(a),rot=Math.abs(s.ang)%180!==0,cx=W/2,cy=H/2,o=s.op/100,tex=s.tex/100,img=x.createImageData(W,H),p=img.data;
+    if(W!==W0||H!==H0){x.canvas.width=W;x.canvas.height=H}}
+  ux=uy=t;
+  const a=s.ang*Math.PI/180,ca=Math.cos(a),sa=Math.sin(a),rot=!straight||swap,cx=W/2,cy=H/2,o=s.op/100,tex=s.tex/100,img=x.createImageData(W,H),p=img.data,vonly=s.hmode==='vertical only';
   for(let y=0;y<H;y++)for(let X=0;X<W;X++){let u,v;
     if(!rot){u=X;v=y}else if(swap){u=y;v=X}else{const dx=X-cx,dy=y-cy;u=dx*ca+dy*sa;v=-dx*sa+dy*ca}
     const fu=u/ux,fv=v/uy,tu=Math.floor(fu),tv=Math.floor(fv),iu=(((tu%WA.T)+WA.T)%WA.T)*3,iv=(((tv%WE.T)+WE.T)%WE.T)*3;
     let r,g,b,sh=1;
-    if(mode==='quick overlay'){r=WA.col[iu]*(1-o)+WE.col[iv]*o;g=WA.col[iu+1]*(1-o)+WE.col[iv+1]*o;b=WA.col[iu+2]*(1-o)+WE.col[iv+2]*o}
-    else{const warp=mode==='plain'?((tu+tv)&1)===0:(((tu+tv)%4)+4)%4<2,C_=warp?WA.col:WE.col,j=warp?iu:iv,f=warp?fu-tu:fv-tv,e=2*Math.abs(f-.5);
-      r=C_[j];g=C_[j+1];b=C_[j+2];sh=1-tex*.3*e*e}
-    const nz=(hash(straight?X%Math.round(WA.T*ux*(swap?0:1)||W):X,straight?y%Math.round(WE.T*uy*(swap?0:1)||H):y,s.seed)-.5)*tex*36,i=(y*W+X)*4;p[i]=r*sh+nz;p[i+1]=g*sh+nz;p[i+2]=b*sh+nz;p[i+3]=255}
+    if(vonly){const up=plWarpUp(tu,tv,mode==='quick overlay'?'2/2 twill':mode);const C_=up?WA.col:null;if(C_){r=C_[iu];g=C_[iu+1];b=C_[iu+2]}else{r=bg[0];g=bg[1];b=bg[2]}sh=1-tex*.3*Math.pow(2*Math.abs((up?fu-tu:fv-tv)-.5),2)}
+    else if(mode==='quick overlay'){r=WA.col[iu]*(1-o)+WE.col[iv]*o;g=WA.col[iu+1]*(1-o)+WE.col[iv+1]*o;b=WA.col[iu+2]*(1-o)+WE.col[iv+2]*o}
+    else{const warp=plWarpUp(tu,tv,mode),C_=warp?WA.col:WE.col,j=warp?iu:iv,f=warp?fu-tu:fv-tv,e=2*Math.abs(f-.5);r=C_[j];g=C_[j+1];b=C_[j+2];sh=1-tex*.3*e*e}
+    const nz=(hash(straight?X%(WA.T*t*(swap?1:1)):X,straight?y%(WE.T*t):y,s.seed)-.5)*tex*36,i=(y*W+X)*4;p[i]=r*sh+nz;p[i+1]=g*sh+nz;p[i+2]=b*sh+nz;p[i+3]=255}
   x.putImageData(img,0,0);
-  if(s.pl&&s.pl!=='none')plaidLogos(x,W,H,s,swap?WE.T*uy:WA.T*ux,swap?WA.T*ux:WE.T*uy)}
+  const repW=swap?WE.T*uy:WA.T*ux,repH=swap?WA.T*ux:WE.T*uy;
+  if(s.oc&&s.oc!=='none')plOvercheck(x,W,H,s,repW,repH,straight);
+  if(s.fuzz>0)plFuzz(x,W,H,s.fuzz/100*Math.max(1,t)*1.6);
+  if(s.pl&&s.pl!=='none')plaidLogos(x,W,H,s,repW,repH)}
+// lines laid over the check: single, double, triple or stitched, in either direction, still tiling
+function plOvercheck(x,W,H,s,repW,repH,straight){const n=Math.max(1,s.ocn),lw=Math.max(1,s.ocw*Math.min(W,H)/1200),gap=lw*1.8,count=s.oc==='double'?2:s.oc==='triple'?3:1,dash=s.oc==='stitched';
+  x.save();x.strokeStyle=s.occ;x.globalAlpha=s.oco/100;x.lineWidth=lw;if(dash){const d=repW/n/Math.max(4,Math.round(repW/n/(lw*5)));x.setLineDash([d*.6,d*.4])}
+  if(!straight){x.translate(W/2,H/2);x.rotate(s.ang*Math.PI/180);x.translate(-W/2,-H/2)}const ext=straight?0:Math.max(W,H);
+  const lines=(len,rep,cb)=>{const step=rep/n;for(let k=-Math.ceil(ext/step)-1;k*step<len+ext+step;k++)for(let m=0;m<count;m++)cb(k*step+step*s.ocx/100+(m-(count-1)/2)*gap)};
+  if(s.ocd!=='horizontal')lines(W,repW,px=>{x.beginPath();x.moveTo(px,-ext);x.lineTo(px,H+ext);x.stroke()});
+  if(s.ocd!=='vertical')lines(H,repH,py=>{x.beginPath();x.moveTo(-ext,py);x.lineTo(W+ext,py);x.stroke()});x.restore()}
+// brushed flannel: blur that wraps around the edges, so the tile stays seamless
+function plFuzz(x,W,H,r){const t=document.createElement('canvas');t.width=W*3;t.height=H*3;const tx=t.getContext('2d');for(let i=0;i<3;i++)for(let j=0;j<3;j++)tx.drawImage(x.canvas,i*W,j*H);
+  const o=document.createElement('canvas');o.width=W*3;o.height=H*3;const ox=o.getContext('2d');ox.filter=`blur(${r.toFixed(2)}px)`;ox.drawImage(t,0,0);x.save();x.globalAlpha=.85;x.drawImage(o,W,H,W,H,0,0,W,H);x.restore()}
+// the stripe editor
+function plPanel(){const s=gstate.plaid;plInit(s);const w=document.createElement('div');w.className='plpanel';
+  const redraw=()=>{if(genActive)drawGen()};const mark=()=>{s.style='Custom'};
+  const presets=`<div class="ctl"><div class="ctl-top"><span>Start from</span><small>then make it yours</small></div><div class="chips">${PLAID_NAMES.map(n=>`<button type="button" class="chip" data-pp="${n}" aria-pressed="${s.style===n}">${n}</button>`).join('')}</div></div>`;
+  const which=s.hmode==='own sequence'?(s._edit||'wp'):'wp';
+  w.innerHTML=presets+`<div class="ctl"><div class="ctl-top"><span>Stripes</span><small>${which==='wp'?(s.hmode==='own sequence'?'vertical':'both directions'):'horizontal'}</small></div>
+    ${s.hmode==='own sequence'?`<div class="chips" style="margin-bottom:8px"><button type="button" class="chip" data-ed="wp" aria-pressed="${which==='wp'}">Vertical</button><button type="button" class="chip" data-ed="wf" aria-pressed="${which==='wf'}">Horizontal</button></div>`:''}
+    <div class="plbar" id="plBar"></div><div class="plrows" id="plRows"></div>
+    <div class="chips" style="margin-top:8px"><button type="button" class="chip" data-op="add">+ Stripe</button><button type="button" class="chip" data-op="rand">Random stripes</button><button type="button" class="chip" data-op="recolor">Random colors</button><button type="button" class="chip" data-op="rev">Reverse</button><button type="button" class="chip" data-op="wide">Wider</button><button type="button" class="chip" data-op="thin">Thinner</button>${s.hmode==='own sequence'?'<button type="button" class="chip" data-op="copy">Copy to other</button>':''}</div></div>
+    <div class="ctl"><div class="ctl-top"><span>Palette</span><small>change a color everywhere it is used</small></div><div class="plpal" id="plPal"></div></div>`;
+  const L=()=>s[which];
+  const rows=()=>{const box=w.querySelector('#plRows'),bar=w.querySelector('#plBar'),list=L(),tot=list.reduce((a,b)=>a+b.w,0)||1;bar.innerHTML=list.map((o,i)=>`<i style="flex:${o.w};background:${o.c}" title="Stripe ${i+1}"></i>`).join('');
+    box.innerHTML='';list.forEach((o,i)=>{const r=document.createElement('div');r.className='plrow';r.innerHTML=`<label class="plsw" style="background:${o.c}"><input type="color" value="${o.c}" aria-label="Stripe ${i+1} color"></label><input type="range" min="1" max="60" value="${o.w}" aria-label="Stripe ${i+1} width"><output>${o.w}</output><button type="button" title="Move up" data-r="up">↑</button><button type="button" title="Duplicate" data-r="dup">⧉</button><button type="button" title="Remove" data-r="del">×</button>`;
+      r.querySelector('input[type=color]').oninput=e=>{o.c=e.target.value;r.querySelector('.plsw').style.background=o.c;mark();bar.children[i].style.background=o.c;pal();redraw()};
+      const rg=r.querySelector('input[type=range]'),pf=()=>rg.style.setProperty('--p',((rg.value-1)/59*100)+'%');pf();rg.oninput=e=>{o.w=+e.target.value;pf();r.querySelector('output').textContent=o.w;bar.children[i].style.flex=o.w;mark();redraw()};
+      r.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{const k=b.dataset.r;if(k==='up'&&i>0)[list[i-1],list[i]]=[list[i],list[i-1]];if(k==='dup')list.splice(i+1,0,{c:o.c,w:o.w});if(k==='del'&&list.length>1)list.splice(i,1);mark();rows();pal();redraw()});box.appendChild(r)})};
+  const pal=()=>{const box=w.querySelector('#plPal'),cs=[...new Set(s.wp.concat(s.hmode==='own sequence'?s.wf:[]).map(o=>o.c))];box.innerHTML='';cs.forEach(c=>{const l=document.createElement('label');l.className='plsw big';l.style.background=c;l.innerHTML=`<input type="color" value="${c}">`;
+      l.querySelector('input').oninput=e=>{const v=e.target.value;[s.wp,s.wf].forEach(a=>a.forEach(o=>{if(o.c===c)o.c=v}));c=v;l.style.background=v;mark();rows();redraw()};box.appendChild(l)});
+    const g=document.createElement('label');g.className='plsw big ground';g.title='Ground color (used with vertical only)';g.style.background=s.ground;g.innerHTML=`<input type="color" value="${s.ground}">`;g.querySelector('input').oninput=e=>{s.ground=e.target.value;g.style.background=s.ground;redraw()};if(s.hmode==='vertical only')box.appendChild(g)};
+  const rcol=()=>{const h=Math.random()*360,sch=Math.floor(Math.random()*4);return i=>{const hh=(h+(sch===0?i*30:sch===1?(i%2)*180:sch===2?i*120:i*12))%360,l=[18,32,48,62,78,90][(i*3+1)%6],sat=sch===3?14:30+Math.random()*35;return hsl2hex(hh,sat,l)}};
+  w.querySelectorAll('[data-pp]').forEach(b=>b.onclick=()=>{plApplyPreset(s,b.dataset.pp);renderGen();drawGen()});
+  w.querySelectorAll('[data-ed]').forEach(b=>b.onclick=()=>{s._edit=b.dataset.ed;renderGen()});
+  w.querySelectorAll('[data-op]').forEach(b=>b.onclick=()=>{const k=b.dataset.op,list=L();
+    if(k==='add')list.push({c:list[list.length-1]?.c||'#888888',w:6});
+    if(k==='rand'){const cs=[...new Set(list.map(o=>o.c))],n=4+Math.floor(Math.random()*7);list.length=0;for(let i=0;i<n;i++)list.push({c:cs[Math.floor(Math.random()*cs.length)],w:[1,2,2,3,4,6,8,12,16,24][Math.floor(Math.random()*10)]})}
+    if(k==='recolor'){const f=rcol(),cs=[...new Set(s.wp.concat(s.wf).map(o=>o.c))],m=new Map(cs.map((c,i)=>[c,f(i)]));[s.wp,s.wf].forEach(a=>a.forEach(o=>o.c=m.get(o.c)))}
+    if(k==='rev')list.reverse();if(k==='wide')list.forEach(o=>o.w=Math.min(60,Math.round(o.w*1.5)||1));if(k==='thin')list.forEach(o=>o.w=Math.max(1,Math.round(o.w/1.5)));
+    if(k==='copy'){const o=which==='wp'?'wf':'wp';s[o]=plCopy(list)}mark();rows();pal();redraw()});
+  rows();pal();return w}
+function hsl2hex(h,s,l){s/=100;l/=100;const k=n=>(n+h/30)%12,a=s*Math.min(l,1-l),f=n=>l-a*Math.max(-1,Math.min(k(n)-3,Math.min(9-k(n),1)));return'#'+[f(0),f(8),f(4)].map(v=>Math.round(v*255).toString(16).padStart(2,'0')).join('')}
+// ---------- camouflage ----------
+// Every pattern is built from noise that wraps around the canvas, so all of them tile seamlessly.
+const CAMO_PALS={Woodland:['#5b5a3c','#3d4a2c','#7a5a3a','#1c1c18','#a39a74'],Desert:['#cdb48c','#a88b62','#7d6a4f','#e7dcc4','#3c3229'],Arid:['#b8a17a','#8c7a5a','#6b6248','#d8caa6','#4a4235'],
+ Urban:['#8d8f93','#5d6066','#2f3136','#c4c6c9','#1a1b1e'],Snow:['#eef0f2','#c9cdd3','#9aa1aa','#ffffff','#5f666f'],Night:['#1b2230','#2c3547','#0e1118','#46526a','#05070a'],
+ Ocean:['#2f4f6b','#1d3448','#4f7894','#0f1c27','#8fb2c8'],Tonal:['#3a3a38','#2a2a28','#4c4b47','#1a1a19','#5e5d58'],Sage:['#a8b39a','#7f8c70','#d6dcc8','#5a6550','#ebe9dd'],
+ Blush:['#e7c2c0','#c99694','#f4e3df','#9c6b6a','#fffaf6'],Cobalt:['#2b4c9b','#1a2f66','#5677c4','#0d1633','#aab9e3'],Earth:['#8a6a4a','#5c4630','#b38b5e','#2e231a','#d8c3a0']};
+const CAMO_TYPES=['woodland','digital','tiger stripe','flecktarn','splinter','desert chip','multi-terrain','brushstroke','blotch'];
+const CAMO_DEF={woodland:'Woodland','digital':'Woodland','tiger stripe':'Woodland',flecktarn:'Woodland',splinter:'Urban','desert chip':'Desert','multi-terrain':'Arid',brushstroke:'Earth',blotch:'Sage'};
+function tnoise(P,Q,seed){// value noise on a P x Q lattice that wraps
+  const g=new Float32Array(P*Q);for(let j=0;j<Q;j++)for(let i=0;i<P;i++)g[j*P+i]=hash(i,j,seed);
+  return(u,v)=>{const x0=Math.floor(u),y0=Math.floor(v),fx=u-x0,fy=v-y0,sx=fx*fx*(3-2*fx),sy=fy*fy*(3-2*fy),i0=((x0%P)+P)%P,j0=((y0%Q)+Q)%Q,i1=(i0+1)%P,j1=(j0+1)%Q;
+    const a=g[j0*P+i0],b=g[j0*P+i1],c=g[j1*P+i0],d=g[j1*P+i1];return a+(b-a)*sx+(c-a)*sy+(a-b-c+d)*sx*sy}}
+function fbmMaker(W,H,cell,oct,seed,stretch=1){const fs=[];let px=Math.max(1,Math.round(W/(cell*stretch))),py=Math.max(1,Math.round(H/cell));for(let o=0;o<oct;o++){fs.push([tnoise(px,py,seed+o*101),px/W,py/H]);px*=2;py*=2}
+  return(X,Y)=>{let s=0,amp=.5,n=0;for(const[f,kx,ky]of fs){s+=f(X*kx,Y*ky)*amp;n+=amp;amp*=.5}return s/n}}
+function drawCamo(x,W,H,s,r){
+  if(s._pt!==s.ptype){s._pt=s.ptype;if(s.pal!=='Custom'){s.pal=CAMO_DEF[s.ptype]||s.pal}}
+  if(s.pal!=='Custom'&&s._pp!==s.pal){const P=CAMO_PALS[s.pal];if(P){['c1','c2','c3','c4','c5'].forEach((k,i)=>s[k]=P[i]);s._pp=s.pal;setTimeout(()=>{const pn=$('#paneGen'),t=pn.scrollTop;renderGen();pn.scrollTop=t},0)}}
+  else if(s.pal!=='Custom'){const P=CAMO_PALS[s.pal];if(P&&['c1','c2','c3','c4','c5'].some((k,i)=>s[k]!==P[i])){s.pal='Custom';s._pp='Custom'}}
+  const C=['c1','c2','c3','c4','c5'].map(k=>hex(s[k])),m=Math.min(W,H),cell=m*s.scale/100,seed=s.seed*7,T=s.ptype,rough=s.rough/100;
+  let pix=1;if(T==='digital'){pix=Math.max(2,Math.round(m*s.pix/1000));const nW=Math.max(pix,Math.round(W/pix)*pix),nH=Math.max(pix,Math.round(H/pix)*pix);if(nW!==W||nH!==H){x.canvas.width=W=nW;x.canvas.height=H=nH}}
+  const img=x.createImageData(W,H),p=img.data;
+  const stretch=T==='tiger stripe'?4:T==='brushstroke'?2.6:s.stretch/50;
+  const N=[0,1,2,3].map(i=>fbmMaker(W,H,cell*[1,.8,.62,.45][i],T==='multi-terrain'?3:4,seed+i*977,stretch)),R_=fbmMaker(W,H,cell*.12,2,seed+5555,1);
+  const cov=s.cover/100,th=[.5-cov*.12,.53-cov*.1,.57-cov*.08,.6-cov*.06],edge=T==='multi-terrain'?.05:T==='blotch'?.02:.004;
+  const set=(i,c,a=1)=>{p[i]=p[i]*(1-a)+c[0]*a;p[i+1]=p[i+1]*(1-a)+c[1]*a;p[i+2]=p[i+2]*(1-a)+c[2]*a;p[i+3]=255};
+  const layer=(v,t)=>edge<.01?(v>t?1:0):Math.max(0,Math.min(1,(v-t)/edge+.5));
+  if(T==='splinter'){// angular voronoi shards with rain lines
+    const n=Math.min(120,Math.max(6,Math.round(W*H/(cell*cell)*1.4))),pts=[];for(let i=0;i<n;i++)pts.push([r()*W,r()*H,Math.floor(r()*4)]);
+    for(let y=0;y<H;y++)for(let X=0;X<W;X++){let best=1e18,bc=0;for(const[a,b,c]of pts){let dx=Math.abs(X-a),dy=Math.abs(y-b);if(dx>W/2)dx=W-dx;if(dy>H/2)dy=H-dy;const d=Math.max(dx,dy*.6)+(dx+dy)*.4;if(d<best){best=d;bc=c}}set((y*W+X)*4,C[bc])}
+    const rl=Math.max(1,Math.round(m/600)),gap=Math.max(6,Math.round(cell*.09));for(let X=0;X<W;X+=gap)for(let y=0;y<H;y++){if(hash(X,Math.floor(y/(gap*1.5)),seed)<.45)continue;for(let k=0;k<rl;k++)set((y*W+((X+k)%W))*4,C[4],.9)}}
+  else for(let y=0;y<H;y+=pix)for(let X=0;X<W;X+=pix){const sx=X+pix/2,sy=y+pix/2,jit=T==='brushstroke'||rough>0?(R_(sx,sy)-.5)*rough*.18:0;let c=C[0].slice(),k;
+    const v=N.map(f=>f(sx,sy)+jit);
+    if(T==='tiger stripe'){c=C[0].slice();if(layer(v[0],th[0])>.5)c=C[1];const band=Math.abs(v[1]-.5);if(band<.045+cov*.04)c=C[3];else if(band<.07+cov*.04&&v[2]>.5)c=C[2]}
+    else if(T==='flecktarn'){c=C[0];const z=layer(v[0],th[0]);if(z>.5)c=C[1];const q=cell*.07,gx=Math.floor(sx/q),gy=Math.floor(sy/q),dx=sx-(gx+.3+hash(gx,gy,seed+1)*.4)*q,dy=sy-(gy+.3+hash(gy,gx,seed+2)*.4)*q,dot=Math.hypot(dx,dy)<q*(.28+hash(gx,gy,seed+4)*.2);const zones=[[v[1],.55,C[2]],[v[2],.58,C[3]],[v[3],.6,C[4]]];for(const[f,t,cc]of zones)if(f>t-cov*.08&&dot)c=cc}
+    else if(T==='desert chip'){c=C[0];if(layer(v[0],th[0])>.5)c=C[1];if(layer(v[1],th[1]+.03)>.5)c=C[2];const gx=Math.floor(sx/(cell*.22)),gy=Math.floor(sy/(cell*.22)),h=hash(gx,gy,seed+3);if(h<.12+cov*.08){const q=cell*.22,cxp=(gx+.3+hash(gx,gy,seed+9)*.4)*q,cyp=(gy+.3+hash(gy,gx,seed+9)*.4)*q,w=1+R_(cxp,cyp)*1.2;if(Math.hypot((sx-cxp)/w,sy-cyp)<cell*.028)c=C[4];else if(h<.07+cov*.05&&Math.hypot((sx-cxp-cell*.05)/w,sy-cyp+cell*.035)<cell*.022)c=C[3]}}
+    else{const L=[[0,th[0]],[1,th[1]],[2,th[2]],[3,th[3]]];for(const[i,t]of L){const z=layer(v[i],t);if(z>0){const cc=C[i+1];c=[c[0]*(1-z)+cc[0]*z,c[1]*(1-z)+cc[1]*z,c[2]*(1-z)+cc[2]*z]}}}
+    for(let yy=y;yy<Math.min(H,y+pix);yy++)for(let xx=X;xx<Math.min(W,X+pix);xx++)set((yy*W+xx)*4,c)}
+  if(s.tex>0){for(let y=0;y<H;y++)for(let X=0;X<W;X++){const i=(y*W+X)*4,nz=(hash(X,y,s.seed)-.5)*s.tex*.4;p[i]+=nz;p[i+1]+=nz;p[i+2]+=nz}}
+  x.putImageData(img,0,0)}
 function plaidLogos(x,W,H,s,repW,repH){
   // Logos sit on a grid that divides one sett repeat exactly, so the tile still wraps seamlessly.
   const n=s.pln,cw=repW/n,ch=repH/n,cols=Math.round(W/cw),rows=Math.round(H/ch),sz=Math.min(cw,ch)*s.pls/100,
-    tint=s.plc==='original'?null:s[{A:'ca',B:'cb',C:'cc',D:'cd',E:'ce',F:'cf'}[s.plc.slice(-1)]],
+    tint=s.plc==='custom color'?s.plcol:null,
     shapes=['star','diamond','flower','cross','dot'],shape=shapes.includes(s.pl),all=s.pl==='all my logos';
   const pts=[];for(let j=-1;j<=rows;j++)for(let i=-1;i<=cols;i++){pts.push([i,j,(i+s.plx/100)*cw,(j+s.ply/100)*ch]);if(s.pllay==='diamond')pts.push([i,j,(i+s.plx/100+.5)*cw,(j+s.ply/100+.5)*ch,1])}
   x.save();x.globalAlpha=s.plo/100;
@@ -1154,13 +1252,16 @@ const GEN=[
   x.restore();x.globalAlpha=1}},
 {id:'builder',name:'Pattern builder',desc:'Place your logos and shapes in one tile, then repeat it. Drag to arrange.',params:[R('cols','tiles across',1,20,4),R('ratio','tile height %',30,300,100),S('layout','repeat',['grid','brick','half-drop']),R('off','offset %',0,100,50),R('gscale','scale everything %',10,300,100),R('ang','rotate pattern',-90,90,0),S('lbg','logo background',['keep','remove white','remove black']),C('bg','background','#ffffff'),S('trans','background',['solid','transparent'])],
  draw(x,W,H,s){drawBuilder(x,W,H,s,{cols:s.cols,ang:s.ang,cx:W/2,cy:H/2})}},
-{id:'plaid',name:'Plaid / tartan',desc:'Woven checks from your own stripe sequence, with optional repeating logos. Tiles seamlessly.',params:[S('style','plaid',PLAID_NAMES),
- Object.assign(T('sett','stripes · letter + width','A18 C3 A6 B1 A6 C3 A18 D10 B2 D10'),{hint:'A–F = the colors below'}),S('sym','repeat',['mirror (tartan)','straight']),
- S('hsame','horizontal stripes',['same as vertical','own sequence']),Object.assign(T('sett2','horizontal stripes (own sequence)','A16 C4 A4 B2'),{hint:'Used when set to own sequence'}),
- C('ca','color A','#8a1a24'),C('cb','color B','#e9dcc0'),C('cc','color C','#17110f'),C('cd','color D','#5c0f19'),C('ce','color E','#b0464e'),C('cf','color F','#ffffff'),
- S('weave','weave',['twill','quick overlay','plain']),R('op','overlay opacity %',10,90,50),R('scale','thread size',1,24,5),R('ang','rotate',-90,90,0),R('tex','fabric texture',0,100,35),R('seed','seed',1,999,7),
- S('pl','repeating logo',['none','logo 1','logo 2','logo 3','logo 4','all my logos','star','diamond','flower','cross','dot']),S('pllay','logo layout',['grid','diamond']),R('pln','logos per repeat',1,4,1),R('pls','logo size %',4,100,28),R('plx','shift across %',0,100,50),R('ply','shift down %',0,100,50),R('plr','logo rotation',-180,180,0),S('plc','logo color',['original','color A','color B','color C','color D','color E','color F']),S('plbg','logo background',['remove white','remove black','keep']),R('plo','logo opacity %',10,100,100)],
+{id:'plaid',name:'Plaid / tartan',desc:'Build checks stripe by stripe: any colors, weaves, overcheck lines and repeating logos. Tiles seamlessly.',params:[
+ S('sym','repeat',['mirror (tartan)','straight']),S('hmode','horizontal stripes',['same as vertical','own sequence','shifted colors','vertical only']),
+ S('weave','weave',PL_WEAVES),R('op','overlay opacity %',10,90,50),R('scale','thread size',1,24,5),R('ang','rotate',-90,90,0),R('tex','fabric texture',0,100,35),R('fuzz','brushed / flannel',0,100,0),R('seed','seed',1,999,7),
+ S('oc','overcheck lines',['none','single','double','triple','stitched']),C('occ','line color','#efe6cf'),R('ocw','line width',1,20,3),R('ocn','lines per repeat',1,6,1),R('ocx','line position %',0,100,50),S('ocd','line direction',['both','vertical','horizontal']),R('oco','line opacity %',10,100,90),
+ S('pl','repeating logo',['none','logo 1','logo 2','logo 3','logo 4','all my logos','star','diamond','flower','cross','dot']),S('pllay','logo layout',['grid','diamond']),R('pln','logos per repeat',1,4,1),R('pls','logo size %',4,100,28),R('plx','shift across %',0,100,50),R('ply','shift down %',0,100,50),R('plr','logo rotation',-180,180,0),C('plcol','logo color','#ffffff'),S('plc','logo color mode',['original','custom color']),S('plbg','logo background',['remove white','remove black','keep']),R('plo','logo opacity %',10,100,100)],
  draw:drawPlaid},
+{id:'camo',name:'Camouflage',desc:'Woodland, digital, tiger stripe, flecktarn, splinter, desert and more. Your colors. Tiles seamlessly.',params:[S('ptype','pattern',CAMO_TYPES),S('pal','colors',[...Object.keys(CAMO_PALS),'Custom']),
+ C('c1','base color','#5b5a3c'),C('c2','color 2','#3d4a2c'),C('c3','color 3','#7a5a3a'),C('c4','color 4','#1c1c18'),C('c5','color 5','#a39a74'),
+ R('scale','pattern size',5,100,35),R('cover','coverage',0,100,50),R('stretch','stretch',20,200,70),R('rough','rough edges',0,100,30),R('pix','pixel size (digital)',4,40,12),R('tex','grain',0,100,20),R('seed','seed',1,999,7)],
+ draw:drawCamo},
 {id:'shards',name:'Shards',desc:'Sharp broken-glass triangles.',params:[R('n','shards',3,200,40),R('size','size',5,80,25),R('sharp','sharpness',0,100,70),...COMMON],
  draw(x,W,H,s,r){const k=Math.min(W,H);x.fillStyle=s.ink;for(let i=0;i<s.n;i++){const cx=r()*W,cy=r()*H,L=k*s.size/100*(.3+r()),a=r()*Math.PI*2,wd=L*(1-s.sharp/100*.85)*.35;
   x.beginPath();x.moveTo(cx+Math.cos(a)*L,cy+Math.sin(a)*L);x.lineTo(cx+Math.cos(a+Math.PI/2)*wd,cy+Math.sin(a+Math.PI/2)*wd);x.lineTo(cx-Math.cos(a)*L*(.2+r()*.5),cy-Math.sin(a)*L*(.2+r()*.5));x.lineTo(cx-Math.cos(a+Math.PI/2)*wd,cy-Math.sin(a+Math.PI/2)*wd);x.closePath();x.fill()}}},
@@ -1264,8 +1365,8 @@ function renderGen(){const pane=$('#paneGen');pane.innerHTML='<div class="phead"
   Object.keys(SIZES).forEach(k=>{const b=document.createElement('button');b.type='button';b.className='chip';b.textContent=k;b.setAttribute('aria-pressed',String(k===genSize));b.onclick=()=>{genSize=k;renderGen();drawGen()};top.querySelector('#gsize').appendChild(b)});
   GEN.forEach(g=>{const b=document.createElement('button');b.type='button';b.className='gen-card';b.setAttribute('aria-pressed',String(g.id===genSel));b.innerHTML=`<b>${g.name}</b><small>${g.desc}</small>`;b.onclick=()=>{genSel=g.id;renderGen();drawGen()};top.querySelector('#glist').appendChild(b)});
   const g=GEN.find(v=>v.id===genSel),s=gstate[g.id],box=document.createElement('div');box.className='params';box.style.borderTop='1px solid var(--line)';box.style.paddingTop='14px';
-  const act=document.createElement('div');act.className='actions';act.style.justifyContent='flex-start';act.innerHTML=`<button class="btn filled" type="button" id="gGo">${genActive?'Regenerate':'Generate'}</button><button class="btn tonal" type="button" id="gShuffle">${genSel==='metal'?'New variation':'New seed'}</button>`;box.appendChild(act);if(g.id==='builder')box.appendChild(bPanel());
-  g.params.forEach(p=>box.appendChild(genCtl(p,s,()=>{if(g.id==='builder')bEditorDraw();if(genActive)drawGen()})));pane.appendChild(box);
+  const act=document.createElement('div');act.className='actions';act.style.justifyContent='flex-start';act.innerHTML=`<button class="btn filled" type="button" id="gGo">${genActive?'Regenerate':'Generate'}</button><button class="btn tonal" type="button" id="gShuffle">${genSel==='metal'?'New variation':'New seed'}</button>`;box.appendChild(act);if(g.id==='builder')box.appendChild(bPanel());if(g.id==='plaid')box.appendChild(plPanel());
+  g.params.forEach(p=>box.appendChild(genCtl(p,s,()=>{if(g.id==='builder')bEditorDraw();if(g.id==='plaid'&&(p.k==='hmode'||p.k==='sym')){s.style=s.style;const pn=$('#paneGen'),t=pn.scrollTop;renderGen();pn.scrollTop=t}if(genActive)drawGen()})));pane.appendChild(box);
   act.querySelector('#gGo').onclick=()=>{if(genSel==='metal')drawGen.vary=true;drawGen();renderGen()};act.querySelector('#gShuffle').onclick=()=>{if('seed'in s)s.seed=1+Math.floor(Math.random()*999);if(genSel==='metal')drawGen.vary=true;renderGen();drawGen()}}
 
 // ---------- tool search ----------
